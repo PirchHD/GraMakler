@@ -1,12 +1,17 @@
 //14.12.2019/15.12.2019 Gra w maklera poczatkowo masz 100 $ i poprostu gra dopki chcesz :p
+// Rozmiar konsoli ma byc 130x30 !! Musze znalezcz zamiennik windows.h na linuxie :P
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 
 void Rysowanie();
 void Wypisz();
+void Rozmiar_Konsoli();
+void Co_Robisz();
 
-int x =1;
+int x =50;
 char tab[25][100];
 
 int Dolar = 100;
@@ -17,7 +22,9 @@ int main(){
    system("clear");
    Rysowanie();
    Wypisz();
-   x=0;
+  // Co_Robisz();
+   system("sleep 5");
+   x--;
   }
 return 0;
 }
@@ -26,9 +33,8 @@ void Rysowanie(){
   for (int i = 0; i < 25; i++){
     for(int k = 0; k < 100; k++){
       tab[i][k] = ' ';
-
       if(k == 74 || k == 0 || k == 4){
-          tab[i][k] = '|';
+         tab[i][k] = '|';
       }
 
       if(i == 24 || i == 21){
@@ -39,6 +45,9 @@ void Rysowanie(){
         int i=4;
 	for(k = 74; k < 100; k++){
 	  tab[i][k] ='-';
+	  if(k == 74 && i ==4){
+	    tab[4][74] = '+';
+	  }
 	}
       }
 
@@ -46,6 +55,9 @@ void Rysowanie(){
 	int i =9;
         for(k =74; k < 100; k++){
           tab[i][k]='-';
+	  if(k == 74 && i == 9){
+	    tab[9][74] = '+';
+	  }
 	}
       }
 
@@ -53,6 +65,9 @@ void Rysowanie(){
         int i = 12;
 	for(k = 74;k < 100; k++){
 	  tab[i][k] = '-';
+          if(k == 74 && i == 12){
+	    tab[12][74] = '+';
+	  }
 	}
       }
 
@@ -109,7 +124,19 @@ void Wypisz(){
       if(k == 76 && i == 11){
         printf("Dolarki: %d $  BTC: %d",Dolar,Bitcoin);
       }
-    }
+   // Wybrano: 
+      if(k ==76 && i == 22){
+        printf("Wybrano: ");
+      }
+
+   }
   printf("\n");
   }
 }
+
+void Rozmiar_Konsoli(){
+ // HANDLE okno  = GetStdHandle(STD_OUTPUT_HANDLE);
+ // COORD size;
+}
+
+
