@@ -1,5 +1,6 @@
-//14.12.2019/15.12.2019 Gra w maklera poczatkowo masz 100 $ i poprostu gra dopki chcesz :p
+//14.12.2019/15.12.2019 Gra w maklera poczatkowo masz 500 $ i poprostu gra dopki chcesz :p
 // Rozmiar konsoli ma byc 130x30 !! Musze znalezcz zamiennik windows.h na linuxie :P
+// Jednak Gra bedzie konczyc sie az uzytkownik zdobedzie milion $$ bo mam fajny pomysl na ekran koncowy :P
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,25 +12,28 @@ void Wypisz();
 void Co_Robisz();
 void Rysowanie1();
 void Wypisz2();
+void Wykres();
 
-int x =50;
+
+int Cykl = 10;
 char tab[25][100];
 
-int Dolar = 100;
+int Dolar = 500;
 int Bitcoin = 0;
 int WartoscMax = 200;
 
 int Wybor = 0;
 
 int main(){
-  while(x){
+  while(Cykl){
    WartoscMax=200;
    system("clear");
    Rysowanie();
+   Wykres();
    Wypisz();
   // Co_Robisz();
-   system("sleep 5");
-   x--;
+   system("sleep 1");
+   Cykl--;
   }
 return 0;
 }
@@ -141,7 +145,6 @@ void Wypisz(){
           printf("%d", WartoscMax);
 	}
       }
-     // WartoscMax-1;
       if(i == 22 && k == 0){
         printf("$$$");
       }
@@ -155,3 +158,21 @@ void Wypisz(){
   }
 }
 
+void Wykres(){
+	// Od k =3 do k 73
+   int i=10, k=3, x = 0,dodaje=0; 
+   tab[i][k] = 'X';
+   x = rand()%101;
+   if(x <= 30 ){
+     dodaje = -1;
+   }
+   if(x > 30 && x <=80){
+     dodaje = 1;
+   }
+   if(x > 80){
+     dodaje = 0;
+   }
+  i = i + dodaje;
+   k++;
+   tab[i][k] = 'X';
+}
