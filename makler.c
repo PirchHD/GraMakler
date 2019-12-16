@@ -23,6 +23,7 @@ int Wybor = 0;
 
 int main(){
   while(x){
+   WartoscMax=200;
    system("clear");
    Rysowanie();
    Wypisz();
