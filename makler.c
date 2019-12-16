@@ -1,4 +1,4 @@
-//14.12.2019/15.12.2019 Gra w maklera poczatkowo masz 500 $ i poprostu gra dopki chcesz :p
+//14.12.2019/15.12.2019/16.12.2019 Gra w maklera poczatkowo masz 500 $ i poprostu gra dopki chcesz :p
 // Rozmiar konsoli ma byc 130x30 !! Musze znalezcz zamiennik windows.h na linuxie :P
 // Jednak Gra bedzie konczyc sie az uzytkownik zdobedzie milion $$ bo mam fajny pomysl na ekran koncowy :P
 
@@ -11,21 +11,23 @@ void Rysowanie();
 void Wypisz();
 void Co_Robisz();
 void Rysowanie1();
-void Wypisz2();
 void Wykres();
 
 
 int Cykl = 10;
 char tab[25][100];
+char Nazwa[]="PirchHD";
 
 int Dolar = 500;
 int Bitcoin = 0;
 int WartoscMax = 200;
 
 int Wybor = 0;
+int StartI=10;
+int StartK=3;
 
 int main(){
-  while(Cykl){
+  while(Dolar != 1000000){
    WartoscMax=200;
    system("clear");
    Rysowanie();
@@ -33,7 +35,6 @@ int main(){
    Wypisz();
   // Co_Robisz();
    system("sleep 1");
-   Cykl--;
   }
 return 0;
 }
@@ -98,32 +99,32 @@ void Wypisz(){
       }
 
       if(k == 76 && i == 1){
-        printf(" +Nazwa uzytkownika:");
+        printf("+Nazwa uzytkownika: %s", Nazwa);
       }
 
       if(k == 76 && i == 2){
-        printf(" +Twoje saldo:");
+        printf("+Twoje saldo: %d",Dolar);
       }
 
       if(k == 76 && i == 3){
-        printf(" +Do miliona brakuje:");
+        printf("+Do miliona brakuje:");
       }
 
       // Wypisuje co chcesz zrobic
-      if(k == 76 && i == 5){
+      if(k == 75 && i == 5){
         printf("CO CHCESZ ZROBIC ?? :D");
       }
 
       if(k == 76 && i == 6){
-        printf(" 1. KUPUJ!! ");
+        printf("1. KUPUJ!! ");
       }
 
       if(k == 76 && i == 7){
-        printf(" 2. SPRZEDAJ");
+        printf("2. SPRZEDAJ");
       }
 
       if(k == 76 && i == 8){
-        printf(" 3. EXIT ");
+        printf("3. EXIT ");
       }
 
       // ILe masz kaski $$ oraz wirtualny kasy o nazwie Bitcoin (mialem wymyslec jakis swoj ale za malo kreatywny jestem)
@@ -160,8 +161,8 @@ void Wypisz(){
 
 void Wykres(){
 	// Od k =3 do k 73
-   int i=10, k=3, x = 0,dodaje=0; 
-   tab[i][k] = 'X';
+   int x = 0,dodaje=0; 
+   tab[StartI][StartK] = 'X';
    x = rand()%101;
    if(x <= 30 ){
      dodaje = -1;
@@ -172,7 +173,7 @@ void Wykres(){
    if(x > 80){
      dodaje = 0;
    }
-  i = i + dodaje;
-   k++;
-   tab[i][k] = 'X';
+  StartI = StartI + dodaje;
+   StartK++;
+   tab[StartI][StartK] = 'X';
 }
