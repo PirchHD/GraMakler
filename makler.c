@@ -8,14 +8,18 @@
 
 void Rysowanie();
 void Wypisz();
-void Rozmiar_Konsoli();
 void Co_Robisz();
+void Rysowanie1();
+void Wypisz2();
 
 int x =50;
 char tab[25][100];
 
 int Dolar = 100;
 int Bitcoin = 0;
+int WartoscMax = 200;
+
+int Wybor = 0;
 
 int main(){
   while(x){
@@ -30,14 +34,14 @@ return 0;
 }
 
 void Rysowanie(){
-  for (int i = 0; i < 25; i++){
+  for (int i = 0; i < 23; i++){
     for(int k = 0; k < 100; k++){
       tab[i][k] = ' ';
-      if(k == 74 || k == 0 || k == 4){
+      if(k == 74 || k == 0 || k == 1){
          tab[i][k] = '|';
       }
 
-      if(i == 24 || i == 21){
+      if( i == 21 ){
         tab[i][k] = '-';
       }
 
@@ -74,17 +78,18 @@ void Rysowanie(){
       if(k == 74 && i == 21){
         tab[i][k] ='+';
       }
+
     }  
   }
 }
 
 void Wypisz(){
-  for(int i = 0; i < 25; i++){
+  for(int i = 0; i < 23; i++){
     for(int k = 0; k < 100;k++){
       printf("%c",tab[i][k]);
 
-      if (k == 75 && i ==0){
-        printf("DANE: ");
+      if(k == 75 && i ==0){
+         printf("DANE: ");
       }
 
       if(k == 76 && i == 1){
@@ -113,7 +118,7 @@ void Wypisz(){
       }
 
       if(k == 76 && i == 8){
-        printf(" 3. EXIT = Nie dales rady :D");
+        printf(" 3. EXIT ");
       }
 
       // ILe masz kaski $$ oraz wirtualny kasy o nazwie Bitcoin (mialem wymyslec jakis swoj ale za malo kreatywny jestem)
@@ -127,16 +132,25 @@ void Wypisz(){
    // Wybrano: 
       if(k ==76 && i == 22){
         printf("Wybrano: ");
+	scanf("%d", &Wybor);
+      }
+     // Wartosc bitcoina
+      if(i != 22 && i != 21){
+        if(k == 0){
+          printf("%d", WartoscMax);
+	}
+      }
+     // WartoscMax-1;
+      if(i == 22 && k == 0){
+        printf("$$$");
       }
 
+      if(i == 21 && k == 0){
+        printf("---");
+      }
    }
+    WartoscMax = WartoscMax-5;
   printf("\n");
   }
 }
-
-void Rozmiar_Konsoli(){
- // HANDLE okno  = GetStdHandle(STD_OUTPUT_HANDLE);
- // COORD size;
-}
-
 
