@@ -12,15 +12,17 @@ void Wypisz();
 void Co_Robisz();
 void Rysowanie1();
 void Wykres();
+void ZapiszT1doT2();
+void ZapiszT2doT1();
 
-
-int Cykl = 10;
 char tab[25][100];
+char tab2[25][100];
 char Nazwa[]="PirchHD";
 
 int Dolar = 500;
 int Bitcoin = 0;
 int WartoscMax = 200;
+int Brakuje = 1000000;
 
 int Wybor = 0;
 int StartI=10;
@@ -28,13 +30,32 @@ int StartK=3;
 
 int main(){
   while(Dolar != 1000000){
+   Brakuje = Brakuje - Dolar;
    WartoscMax=200;
    system("clear");
+
    Rysowanie();
    Wykres();
+   ZapiszT1doT2();
    Wypisz();
-  // Co_Robisz();
+   ZapiszT2doT1();
+
+   if(Wybor == 3){
+     // WYPISUJE 3 
+     return 0;
+   }
+   if(Wybor == 1){
+     //Wypisuje 1
+     //Kupuje btc
+   }
+   if(Wybor == 2){
+    // system("clear");	   
+      // Wypisz();
+     //Sprzedaje btc
+   }
+
    system("sleep 1");
+
   }
 return 0;
 }
@@ -42,7 +63,11 @@ return 0;
 void Rysowanie(){
   for (int i = 0; i < 23; i++){
     for(int k = 0; k < 100; k++){
-      tab[i][k] = ' ';
+     
+     if(tab[i][k] != 'X'){
+     tab[i][k] = ' ';
+     }
+     
       if(k == 74 || k == 0 || k == 1){
          tab[i][k] = '|';
       }
@@ -93,7 +118,6 @@ void Wypisz(){
   for(int i = 0; i < 23; i++){
     for(int k = 0; k < 100;k++){
       printf("%c",tab[i][k]);
-
       if(k == 75 && i ==0){
          printf("DANE: ");
       }
@@ -107,7 +131,7 @@ void Wypisz(){
       }
 
       if(k == 76 && i == 3){
-        printf("+Do miliona brakuje:");
+        printf("+Do miliona brakuje: %d", Brakuje);
       }
 
       // Wypisuje co chcesz zrobic
@@ -139,6 +163,7 @@ void Wypisz(){
       if(k ==76 && i == 22){
         printf("Wybrano: ");
 	scanf("%d", &Wybor);
+	printf("Ladowanie...");
       }
      // Wartosc bitcoina
       if(i != 22 && i != 21){
@@ -161,19 +186,36 @@ void Wypisz(){
 
 void Wykres(){
 	// Od k =3 do k 73
+ //  for(int k = 0; k < 100; k++){
    int x = 0,dodaje=0; 
    tab[StartI][StartK] = 'X';
    x = rand()%101;
-   if(x <= 30 ){
+   if(x <= 50 ){
      dodaje = -1;
    }
-   if(x > 30 && x <=80){
+   if(x > 50 && x <=90){
      dodaje = 1;
    }
-   if(x > 80){
-     dodaje = 0;
+   if(x > 90){ dodaje = 0;
    }
   StartI = StartI + dodaje;
    StartK++;
    tab[StartI][StartK] = 'X';
+  // }
+}
+
+void ZapiszT1doT2(){
+  for(int i = 0; i < 25; i ++){
+    for(int k = 0; k < 100; k++){
+      tab2[i][k] = tab[i][k];
+    }
+  }
+}
+
+void ZapiszT2doT1(){
+  for(int i = 0; i < 25; i ++){
+    for(int k = 0; k < 100; k++){
+      tab[i][k] = tab2[i][k];
+    }
+  }
 }
