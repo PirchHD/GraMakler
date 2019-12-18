@@ -1,6 +1,8 @@
 //14.12.2019/15.12.2019/16.12.2019 Gra w maklera poczatkowo masz 500 $ i poprostu gra dopki chcesz :p
 // Rozmiar konsoli ma byc 130x30 !! Musze znalezcz zamiennik windows.h na linuxie :P
 // Jednak Gra bedzie konczyc sie az uzytkownik zdobedzie milion $$ bo mam fajny pomysl na ekran koncowy :P
+// 18.12.1019 ogolnie gra jest skonczona w 90% ale chce jeszcze zrobic cos w stylu intra oraz mozliwosc dania własnego Nick. 
+// A takze naprawic brzydkie bugi (wizualne)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,11 +11,11 @@
 
 void Rysowanie();
 void Wypisz();
-void Co_Robisz();
-void Rysowanie1();
 void Wykres();
 void ZapiszT1doT2();
 void ZapiszT2doT1();
+void Sprawdza();
+void Czyszczenie(int ZapisaneI,int ZapisaneK);
 
 char tab[25][100];
 char tab2[25][100];
@@ -22,25 +24,32 @@ char Nazwa[]="PirchHD";
 int Dolar = 500;
 int Bitcoin = 0;
 int WartoscMax = 200;
+int WartoscZapis = 0;
 int Brakuje = 1000000;
 
 int Wybor = 0;
 int StartI=10;
 int StartK=3;
+int timeStart;
 
 int main(){
   while(Dolar != 1000000){
-   Brakuje = Brakuje - Dolar;
-   WartoscMax=200;
+  // Brakuje = Brakuje - Dolar;
    system("clear");
+   
+   WartoscZapis = WartoscMax; // Działa ale brzydko 
+   WartoscMax = WartoscZapis;
 
    Rysowanie();
    Wykres();
+   Sprawdza();
    ZapiszT1doT2();
    Wypisz();
    ZapiszT2doT1();
 
-   if(Wybor == 3){
+   
+   
+  if(Wybor == 3){
      // WYPISUJE 3 
      return 0;
    }
@@ -53,6 +62,9 @@ int main(){
       // Wypisz();
      //Sprzedaje btc
    }
+  if(Wybor == '\n'){
+   main();
+  }
 
    system("sleep 1");
 
@@ -61,7 +73,7 @@ return 0;
 }
 
 void Rysowanie(){
-  for (int i = 0; i < 23; i++){
+  for (int i = 0; i < 22; i++){
     for(int k = 0; k < 100; k++){
      
      if(tab[i][k] != 'X'){
@@ -160,48 +172,56 @@ void Wypisz(){
         printf("Dolarki: %d $  BTC: %d",Dolar,Bitcoin);
       }
    // Wybrano: 
-      if(k ==76 && i == 22){
+      if(k ==2 && i == 22){
         printf("Wybrano: ");
 	scanf("%d", &Wybor);
+	//if((clock() - timeStart) / CLOCKS_PER_SEC >= 10)
 	printf("Ladowanie...");
       }
      // Wartosc bitcoina
       if(i != 22 && i != 21){
         if(k == 0){
-          printf("%d", WartoscMax);
+          printf("%d", WartoscZapis);
 	}
       }
       if(i == 22 && k == 0){
-        printf("$$$");
+        printf("|$$$|");
+      }
+      if(i == 22 && k ==1){
+	for(int Sekundy = 0; Sekundy < 26; Sekundy++){
+          printf("%d|",Sekundy);
+	}
+	printf("TIME|");
       }
 
       if(i == 21 && k == 0){
         printf("---");
       }
+
+
    }
-    WartoscMax = WartoscMax-5;
+    WartoscZapis = WartoscZapis-5;
   printf("\n");
   }
 }
 
 void Wykres(){
 	// Od k =3 do k 73
- //  for(int k = 0; k < 100; k++){
    int x = 0,dodaje=0; 
    tab[StartI][StartK] = 'X';
    x = rand()%101;
-   if(x <= 50 ){
+   if(x <= 90 ){
      dodaje = -1;
    }
-   if(x > 50 && x <=90){
+   if(x > 90 && x <=95){
      dodaje = 1;
    }
-   if(x > 90){ dodaje = 0;
+   if(x > 95){ 
+     dodaje = 0;
    }
   StartI = StartI + dodaje;
    StartK++;
    tab[StartI][StartK] = 'X';
-  // }
 }
 
 void ZapiszT1doT2(){
@@ -218,4 +238,44 @@ void ZapiszT2doT1(){
       tab[i][k] = tab2[i][k];
     }
   }
+}
+
+void Sprawdza(){
+  int k = 73;
+  for(int i = 0; i < 22; i++){
+    if(tab[i][k] == 'X'){
+      k = 3;
+      Czyszczenie(i, k);
+    }
+  }
+
+  int i = 21;
+
+  for(int k = 3; k < 74; k++){
+    if(tab[i][k]  == 'X'){
+      i = 1;
+      Czyszczenie(i, k);
+    }
+
+    int i = 0;
+    if(tab[i][k] == 'X'){ // Naprawic ten if !! gora 
+      i = 20;
+     WartoscMax = WartoscMax + 105;
+     Czyszczenie(i, k);
+    }
+  }
+}
+
+void Czyszczenie(int ZapisaneI, int ZapisaneK){
+  for(int i = 0; i < 25; i ++){
+    for(int k = 0; k < 100; k ++){
+      tab[i][k] = ' ';
+    }
+  }
+  StartI=ZapisaneI;
+  StartK=ZapisaneK;
+  tab[ZapisaneI][ZapisaneK] = 'X';
+  tab2[ZapisaneI][ZapisaneK] = 'X';
+  WartoscZapis = WartoscMax;
+  Rysowanie();
 }
