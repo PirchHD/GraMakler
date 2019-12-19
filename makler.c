@@ -16,13 +16,15 @@ void ZapiszT1doT2();
 void ZapiszT2doT1();
 void Sprawdza();
 void Czyszczenie(int ZapisaneI,int ZapisaneK);
+void Kupuj();
+void Sprzedaj();
 
 char tab[25][100];
 char tab2[25][100];
 char Nazwa[]="PirchHD";
 
 int Dolar = 500;
-int Bitcoin = 0;
+int BTC = 0;
 int WartoscMax = 200;
 int WartoscZapis = 0;
 int Brakuje = 1000000;
@@ -31,6 +33,8 @@ int Wybor = 0;
 int StartI=10;
 int StartK=3;
 int timeStart;
+int AktualnaCena = 150;
+int Saldo = 0;
 
 int main(){
   while(Dolar != 1000000){
@@ -55,12 +59,12 @@ int main(){
    }
    if(Wybor == 1){
      //Wypisuje 1
-     //Kupuje btc
+     Kupuj();
    }
    if(Wybor == 2){
     // system("clear");	   
       // Wypisz();
-     //Sprzedaje btc
+     Sprzedaj();
    }
   if(Wybor == '\n'){
    main();
@@ -73,53 +77,60 @@ return 0;
 }
 
 void Rysowanie(){
-  for (int i = 0; i < 22; i++){
+  for (int i = 0; i < 24; i++){
     for(int k = 0; k < 100; k++){
      
      if(tab[i][k] != 'X'){
      tab[i][k] = ' ';
      }
-     
-      if(k == 74 || k == 0 || k == 1){
+
+     if(i != 23){
+      if(k == 75 || k == 0 || k == 1){
          tab[i][k] = '|';
       }
+     }
 
-      if( i == 21 ){
+      if( i == 22 || i == 0 ){
+        if(k != 0 && k!= 1)
         tab[i][k] = '-';
       }
 
-      if(k == 74 && i == 4){
-        int i=4;
-	for(k = 74; k < 100; k++){
+      if(k == 75 && i == 5){
+        int i=5;
+	for(k = 75; k < 100; k++){
 	  tab[i][k] ='-';
-	  if(k == 74 && i ==4){
-	    tab[4][74] = '+';
+	  if(k == 75 && i ==5){
+	    tab[5][75] = '+';
 	  }
 	}
       }
 
-      if(k == 74 && i == 9){
-	int i =9;
-        for(k =74; k < 100; k++){
+      if(k == 75 && i == 10){
+	int i =10;
+        for(k =75; k < 100; k++){
           tab[i][k]='-';
-	  if(k == 74 && i == 9){
-	    tab[9][74] = '+';
+	  if(k == 75 && i == 10){
+	    tab[10][75] = '+';
 	  }
 	}
       }
 
-      if( k == 74 && i == 12){
-        int i = 12;
-	for(k = 74;k < 100; k++){
+      if( k == 75 && i == 13){
+        int i = 13;
+	for(k = 75;k < 100; k++){
 	  tab[i][k] = '-';
-          if(k == 74 && i == 12){
-	    tab[12][74] = '+';
+          if(k == 75 && i == 13){
+	    tab[13][75] = '+';
 	  }
 	}
       }
 
-      if(k == 74 && i == 21){
+      if(k == 75 && i == 22){
         tab[i][k] ='+';
+      }
+
+      if(k == 0 && i == 23){
+        tab[i][k] = '|';
       }
 
     }  
@@ -127,80 +138,86 @@ void Rysowanie(){
 }
 
 void Wypisz(){
-  for(int i = 0; i < 23; i++){
+  for(int i = 0; i < 24; i++){
     for(int k = 0; k < 100;k++){
       printf("%c",tab[i][k]);
-      if(k == 75 && i ==0){
+      if(k == 75 && i ==1){
          printf("DANE: ");
       }
 
-      if(k == 76 && i == 1){
+      if(k == 76 && i == 2){
         printf("+Nazwa uzytkownika: %s", Nazwa);
       }
 
-      if(k == 76 && i == 2){
-        printf("+Twoje saldo: %d",Dolar);
+      if(k == 76 && i == 3){
+	Saldo = Dolar + (BTC * AktualnaCena);
+        printf("+Twoje saldo: %d",Saldo);
       }
 
-      if(k == 76 && i == 3){
+      if(k == 76 && i == 4){
+	Brakuje = Brakuje - Saldo;
         printf("+Do miliona brakuje: %d", Brakuje);
       }
 
       // Wypisuje co chcesz zrobic
-      if(k == 75 && i == 5){
+      if(k == 75 && i == 6){
         printf("CO CHCESZ ZROBIC ?? :D");
       }
 
-      if(k == 76 && i == 6){
+      if(k == 76 && i == 7){
         printf("1. KUPUJ!! ");
       }
 
-      if(k == 76 && i == 7){
+      if(k == 76 && i == 8){
         printf("2. SPRZEDAJ");
       }
 
-      if(k == 76 && i == 8){
+      if(k == 76 && i == 9){
         printf("3. EXIT ");
       }
 
       // ILe masz kaski $$ oraz wirtualny kasy o nazwie Bitcoin (mialem wymyslec jakis swoj ale za malo kreatywny jestem)
-      if(k == 76 && i == 10){
+      if(k == 76 && i == 11){
         printf("Twoj portfel: ");
       }
 
-      if(k == 76 && i == 11){
-        printf("Dolarki: %d $  BTC: %d",Dolar,Bitcoin);
+      if(k == 76 && i == 12){
+        printf("Dolarki: %d $  BTC: %d",Dolar,BTC);
       }
    // Wybrano: 
-      if(k ==2 && i == 22){
+      if(k ==2 && i == 23){
         printf("Wybrano: ");
 	scanf("%d", &Wybor);
 	//if((clock() - timeStart) / CLOCKS_PER_SEC >= 10)
 	printf("Ladowanie...");
       }
      // Wartosc bitcoina
-      if(i != 22 && i != 21){
+      if(i != 23 && i != 22 && i !=0){
         if(k == 0){
           printf("%d", WartoscZapis);
+	  WartoscZapis = WartoscZapis - 5;
 	}
-      }
-      if(i == 22 && k == 0){
-        printf("|$$$|");
-      }
-      if(i == 22 && k ==1){
-	for(int Sekundy = 0; Sekundy < 26; Sekundy++){
-          printf("%d|",Sekundy);
-	}
-	printf("TIME|");
       }
 
-      if(i == 21 && k == 0){
-        printf("---");
+      if(i == 0 && k == 0){
+        printf("$$$");
+      }
+
+      if(i == 23 && k == 0){
+        printf("TIME|");
+	for(int Sekundy = 1; Sekundy < 51; Sekundy= Sekundy +2){
+          printf("%d|",Sekundy);
+	}
+	printf("50|");
+      }
+
+      if(i == 22 && k == 0){
+        printf("$$$");
       }
 
 
    }
-    WartoscZapis = WartoscZapis-5;
+   // WartoscZapis = WartoscZapis-5;
   printf("\n");
   }
 }
@@ -212,9 +229,11 @@ void Wykres(){
    x = rand()%101;
    if(x <= 90 ){
      dodaje = -1;
+     	AktualnaCena = AktualnaCena + 5;
    }
    if(x > 90 && x <=95){
      dodaje = 1;
+     AktualnaCena = AktualnaCena - 5;
    }
    if(x > 95){ 
      dodaje = 0;
@@ -249,9 +268,8 @@ void Sprawdza(){
     }
   }
 
-  int i = 21;
-
-  for(int k = 3; k < 74; k++){
+  int i = 22;
+  for(int k = 3; k < 75; k++){
     if(tab[i][k]  == 'X'){
       i = 1;
       Czyszczenie(i, k);
@@ -259,7 +277,7 @@ void Sprawdza(){
 
     int i = 0;
     if(tab[i][k] == 'X'){ // Naprawic ten if !! gora 
-      i = 20;
+      i = 21;
      WartoscMax = WartoscMax + 105;
      Czyszczenie(i, k);
     }
@@ -278,4 +296,18 @@ void Czyszczenie(int ZapisaneI, int ZapisaneK){
   tab2[ZapisaneI][ZapisaneK] = 'X';
   WartoscZapis = WartoscMax;
   Rysowanie();
+}
+
+void Kupuj(){
+    if(Dolar >= AktualnaCena){
+       BTC++;
+      Dolar = Dolar - AktualnaCena;
+   }
+}
+
+void Sprzedaj(){
+  if(BTC > 0){
+    BTC--;
+    Dolar = Dolar + AktualnaCena;
+  }
 }
