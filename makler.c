@@ -9,9 +9,9 @@
 #include <time.h>
 #include <unistd.h>
 
-void Rysowanie();
-void Wypisz();
-void Wykres();
+void Rysowanie();  // Rysuje: | - i +
+void Wypisz();    // wypisuje tablice oraz w danym punkcie wypisuje takie rzeczy jak np. DANE:
+void Wykres();   
 void ZapiszT1doT2();
 void ZapiszT2doT1();
 void Sprawdza();
@@ -19,26 +19,26 @@ void Czyszczenie(int ZapisaneI,int ZapisaneK);
 void Kupuj();
 void Sprzedaj();
 
-char tab[25][100];
+char tab[25][100]; // Jakbym wczesniej pomyslal na temat działaniem programu jedna tablica by wystarczyła :D
 char tab2[25][100];
 char Nazwa[]="PirchHD";
 
 int Dolar = 500;
 int BTC = 0;
 int WartoscMax = 200;
+int WartoscMin = 0;
 int WartoscZapis = 0;
 int Brakuje = 1000000;
 
-int Wybor = 0;
-int StartI=10;
-int StartK=3;
-int timeStart;
-int AktualnaCena = 150;
-int Saldo = 0;
+int Wybor = 0; // WYBOR CO ZROBISZ KUPISZ - 1 SPRZEDASZ- 2 EXIT - 3 NIC - DALEJ WYKONUJE FUNKCJE MAIN
+int StartI=10; //  OD TEGO ZACZYNA RYSOWAC FUNKCJA
+int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA
+int AktualnaCena = 150; // Aktualna cena 1 bit
+int Saldo = 0; // Saldo jest liczone co cykl wykonujacy main
 
 int main(){
   while(Dolar != 1000000){
-  // Brakuje = Brakuje - Dolar;
+
    system("clear");
    
    WartoscZapis = WartoscMax; // Działa ale brzydko 
@@ -46,6 +46,7 @@ int main(){
 
    Rysowanie();
    Wykres();
+   WartoscMin = WartoscMax;
    Sprawdza();
    ZapiszT1doT2();
    Wypisz();
@@ -200,7 +201,10 @@ void Wypisz(){
       }
 
       if(i == 0 && k == 0){
-        printf("$$$");
+        if(WartoscMin >= 100 && WartoscMin <= 999)
+          printf("$$$");
+        if(WartoscMin >= 1000 && WartoscMin <9999)
+	  printf("$$$$");
       }
 
       if(i == 23 && k == 0){
@@ -212,12 +216,16 @@ void Wypisz(){
       }
 
       if(i == 22 && k == 0){
-        printf("$$$");
+	if(WartoscMin >= 100 && WartoscMin <= 999)
+          printf("$$$");
+	if(WartoscMin >= 1000 && WartoscMin <= 9999)
+          printf("$$$$");
+	if(WartoscMin >= 10000 && WartoscMin <= 99999)
+	  printf("$$$$$");
       }
 
 
    }
-   // WartoscZapis = WartoscZapis-5;
   printf("\n");
   }
 }
@@ -231,11 +239,11 @@ void Wykres(){
      dodaje = -1;
      	AktualnaCena = AktualnaCena + 5;
    }
-   if(x > 90 && x <=95){
+   if(x > 90 && x <=96){
      dodaje = 1;
      AktualnaCena = AktualnaCena - 5;
    }
-   if(x > 95){ 
+   if(x > 96){ 
      dodaje = 0;
    }
   StartI = StartI + dodaje;
@@ -272,6 +280,7 @@ void Sprawdza(){
   for(int k = 3; k < 75; k++){
     if(tab[i][k]  == 'X'){
       i = 1;
+      WartoscMax=WartoscMax - 105;
       Czyszczenie(i, k);
     }
 
