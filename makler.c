@@ -9,6 +9,14 @@
 #include <time.h>
 #include <unistd.h>
 
+// Definuje kolory na linuxie nie musze używać osobnej biblioteki więc poprostu skorzystałem z tego
+
+#define GREEN 32
+#define BLACK 30
+#define BLUE 34
+
+//Koniec Definiowania Kolorow
+
 void Rysowanie();  // Rysuje: | - i +
 void Wypisz();    // wypisuje tablice oraz w danym punkcie wypisuje takie rzeczy jak np. DANE:
 void Wykres();   
@@ -18,6 +26,12 @@ void Sprawdza();
 void Czyszczenie(int ZapisaneI,int ZapisaneK);
 void Kupuj();
 void Sprzedaj();
+
+//funkcje Koloru
+void Reset(); // Zwykły Kolor
+void Zielony();
+void Niebieski();
+
 
 char tab[25][100]; // Jakbym wczesniej pomyslal na temat działaniem programu jedna tablica by wystarczyła :D
 char tab2[25][100];
@@ -30,6 +44,11 @@ int WartoscMin = 0;
 int WartoscZapis = 0;
 int Brakuje = 1000000;
 
+//Zmienne do liczenia czasu (Time)
+int Sekundy = 0; 
+int Minuty = 0;
+int Godziny = 0;
+
 int Wybor = 0; // WYBOR CO ZROBISZ KUPISZ - 1 SPRZEDASZ- 2 EXIT - 3 NIC - DALEJ WYKONUJE FUNKCJE MAIN
 int StartI=10; //  OD TEGO ZACZYNA RYSOWAC FUNKCJA
 int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA
@@ -41,8 +60,10 @@ int main(){
 
    system("clear");
    
-   WartoscZapis = WartoscMax; // Działa ale brzydko 
+   WartoscZapis = WartoscMax; 
    WartoscMax = WartoscZapis;
+  
+   Reset();
 
    Rysowanie();
    Wykres();
@@ -63,8 +84,7 @@ int main(){
      Kupuj();
    }
    if(Wybor == 2){
-    // system("clear");	   
-      // Wypisz();
+    // Wypisuje 2
      Sprzedaj();
    }
   if(Wybor == '\n'){
@@ -80,13 +100,13 @@ return 0;
 void Rysowanie(){
   for (int i = 0; i < 24; i++){
     for(int k = 0; k < 100; k++){
-     
+  
      if(tab[i][k] != 'X'){
      tab[i][k] = ' ';
      }
 
      if(i != 23){
-      if(k == 75 || k == 0 || k == 1){
+      if(k == 64 || k == 0 || k == 1){
          tab[i][k] = '|';
       }
      }
@@ -96,44 +116,44 @@ void Rysowanie(){
         tab[i][k] = '-';
       }
 
-      if(k == 75 && i == 5){
+      if(k == 64 && i == 5){
         int i=5;
-	for(k = 75; k < 100; k++){
+	for(k = 64; k < 100; k++){
 	  tab[i][k] ='-';
-	  if(k == 75 && i ==5){
-	    tab[5][75] = '+';
+	  if(k == 64 && i ==5){
+	    tab[5][64] = '+';
 	  }
 	}
       }
 
-      if(k == 75 && i == 10){
+      if(k == 64 && i == 10){
 	int i =10;
-        for(k =75; k < 100; k++){
+        for(k = 64; k < 100; k++){
           tab[i][k]='-';
-	  if(k == 75 && i == 10){
-	    tab[10][75] = '+';
+	  if(k == 64 && i == 10){
+	    tab[10][64] = '+';
 	  }
 	}
       }
 
-      if( k == 75 && i == 13){
+      if( k == 64 && i == 13){
         int i = 13;
-	for(k = 75;k < 100; k++){
+	for(k = 64;k < 100; k++){
 	  tab[i][k] = '-';
-          if(k == 75 && i == 13){
-	    tab[13][75] = '+';
+          if(k == 64 && i == 13){
+	    tab[13][64] = '+';
 	  }
 	}
       }
 
-      if(k == 75 && i == 22){
+      if(k == 64 && i == 22){
         tab[i][k] ='+';
       }
 
       if(k == 0 && i == 23){
         tab[i][k] = '|';
       }
-
+     
     }  
   }
 }
@@ -142,48 +162,64 @@ void Wypisz(){
   for(int i = 0; i < 24; i++){
     for(int k = 0; k < 100;k++){
       printf("%c",tab[i][k]);
-      if(k == 75 && i ==1){
+      if(k == 65 && i ==1){
          printf("DANE: ");
       }
 
-      if(k == 76 && i == 2){
+      if(k == 66 && i == 2){
+	Niebieski();
         printf("+Nazwa uzytkownika: %s", Nazwa);
+	Reset();
       }
 
-      if(k == 76 && i == 3){
+      if(k == 66 && i == 3){
 	Saldo = Dolar + (BTC * AktualnaCena);
+	Niebieski();
         printf("+Twoje saldo: %d",Saldo);
+	Reset();
       }
 
-      if(k == 76 && i == 4){
+      if(k == 66 && i == 4){
+	Niebieski();
 	Brakuje = Brakuje - Saldo;
         printf("+Do miliona brakuje: %d", Brakuje);
+	Reset();
       }
 
       // Wypisuje co chcesz zrobic
-      if(k == 75 && i == 6){
+      if(k == 65 && i == 6){
         printf("CO CHCESZ ZROBIC ?? :D");
       }
 
-      if(k == 76 && i == 7){
+      if(k == 66 && i == 7){
+	Niebieski();
         printf("1. KUPUJ!! ");
+	Reset();
       }
 
-      if(k == 76 && i == 8){
+      if(k == 66 && i == 8){
+	Niebieski();
         printf("2. SPRZEDAJ");
+	Reset();
       }
 
-      if(k == 76 && i == 9){
+      if(k == 66 && i == 9){
+	Niebieski();
         printf("3. EXIT ");
+	Reset();
       }
 
       // ILe masz kaski $$ oraz wirtualny kasy o nazwie Bitcoin (mialem wymyslec jakis swoj ale za malo kreatywny jestem)
-      if(k == 76 && i == 11){
+      if(k == 65 && i == 11){
         printf("Twoj portfel: ");
       }
 
-      if(k == 76 && i == 12){
-        printf("Dolarki: %d $  BTC: %d",Dolar,BTC);
+      if(k == 65 && i == 12){
+	Zielony();
+        printf("Dolarki: %d $ ",Dolar);
+	Reset();
+	printf("BTC: %d ",BTC);
+	Reset();
       }
    // Wybrano: 
       if(k ==2 && i == 23){
@@ -195,32 +231,42 @@ void Wypisz(){
      // Wartosc bitcoina
       if(i != 23 && i != 22 && i !=0){
         if(k == 0){
-          printf("%d", WartoscZapis);
+          printf("%5d", WartoscZapis);
 	  WartoscZapis = WartoscZapis - 5;
 	}
       }
 
       if(i == 0 && k == 0){
-        if(WartoscMin >= 100 && WartoscMin <= 999)
-          printf("$$$");
-        if(WartoscMin >= 1000 && WartoscMin <9999)
-	  printf("$$$$");
+	  printf("$$$$$");
+	 
       }
 
       if(i == 23 && k == 0){
-        printf("TIME|");
-	for(int Sekundy = 1; Sekundy < 51; Sekundy= Sekundy +2){
-          printf("%d|",Sekundy);
+        printf("TIME|TIME|TIME|");
+        Sekundy++;
+	printf("Sekundy: %2d| ",Sekundy);
+	if(Sekundy == 60){
+          Minuty++;
+	  Sekundy = 0;
+	  printf("Minuta: %2d| ",Minuty);
 	}
-	printf("50|");
+	else{
+	  printf("Minuta: %2d| ",Minuty);
+	}
+	if(Minuty == 60){
+	  Minuty = 0; 
+	  Godziny++;
+	  printf("Godzina: %2d|", Godziny);
+	}
+	else{
+          printf("Godzina: %2d|",Godziny);
+	}
+
+	printf("TIME|TIME|TIME|");
+
       }
 
       if(i == 22 && k == 0){
-	if(WartoscMin >= 100 && WartoscMin <= 999)
-          printf("$$$");
-	if(WartoscMin >= 1000 && WartoscMin <= 9999)
-          printf("$$$$");
-	if(WartoscMin >= 10000 && WartoscMin <= 99999)
 	  printf("$$$$$");
       }
 
@@ -235,15 +281,15 @@ void Wykres(){
    int x = 0,dodaje=0; 
    tab[StartI][StartK] = 'X';
    x = rand()%101;
-   if(x <= 90 ){
+   if(x <= 0 ){
      dodaje = -1;
      	AktualnaCena = AktualnaCena + 5;
    }
-   if(x > 90 && x <=96){
+   if(x > 1 && x <=2){
      dodaje = 1;
      AktualnaCena = AktualnaCena - 5;
    }
-   if(x > 96){ 
+   if(x > 2){ 
      dodaje = 0;
    }
   StartI = StartI + dodaje;
@@ -268,7 +314,7 @@ void ZapiszT2doT1(){
 }
 
 void Sprawdza(){
-  int k = 73;
+  int k = 64;
   for(int i = 0; i < 22; i++){
     if(tab[i][k] == 'X'){
       k = 3;
@@ -277,7 +323,7 @@ void Sprawdza(){
   }
 
   int i = 22;
-  for(int k = 3; k < 75; k++){
+  for(int k = 3; k < 65; k++){
     if(tab[i][k]  == 'X'){
       i = 1;
       WartoscMax=WartoscMax - 105;
@@ -319,4 +365,18 @@ void Sprzedaj(){
     BTC--;
     Dolar = Dolar + AktualnaCena;
   }
+}
+
+// Funkcje odpowiadajace za Kolor/Intro/Koniec gry
+
+void Reset(){
+printf("%c[%dm",0x1B,0);
+}
+
+void Zielony(){
+printf("%c[%dm",0x1B,GREEN);
+}
+
+void Niebieski(){
+  printf("%c[%dm",0x1B,BLUE);
 }
