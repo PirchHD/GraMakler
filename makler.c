@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include <curses.h>
 
 // Definuje kolory na linuxie nie musze używać osobnej biblioteki więc poprostu skorzystałem z tego
 
@@ -16,7 +17,6 @@
 #define BLUE 34
 
 //Koniec Definiowania Kolorow
-
 void Rysowanie();  // Rysuje: | - i +
 void Wypisz();    // wypisuje tablice oraz w danym punkcie wypisuje takie rzeczy jak np. DANE:
 void Wykres();   
@@ -32,9 +32,12 @@ void Reset(); // Zwykły Kolor
 void Zielony();
 void Niebieski();
 
+void intro(); // Animacja napisu $$$ i MAKLER
+void WypiszIntro();
 
 char tab[25][100]; // Jakbym wczesniej pomyslal na temat działaniem programu jedna tablica by wystarczyła :D
 char tab2[25][100];
+char Tabintra[25][100];
 char Nazwa[]="PirchHD";
 
 int Dolar = 500;
@@ -43,9 +46,10 @@ int WartoscMax = 200;
 int WartoscMin = 0;
 int WartoscZapis = 0;
 int Brakuje = 1000000;
+int timeStart;
 
 //Zmienne do liczenia czasu (Time)
-int Sekundy = 0; 
+int Sekundy = -1; 
 int Minuty = 0;
 int Godziny = 0;
 
@@ -56,6 +60,10 @@ int AktualnaCena = 150; // Aktualna cena 1 bit
 int Saldo = 0; // Saldo jest liczone co cykl wykonujacy main
 
 int main(){
+  system("clear");
+  intro();
+  WypiszIntro();
+
   while(Dolar != 1000000){
 
    system("clear");
@@ -64,6 +72,7 @@ int main(){
    WartoscMax = WartoscZapis;
   
    Reset();
+   
 
    Rysowanie();
    Wykres();
@@ -73,8 +82,7 @@ int main(){
    Wypisz();
    ZapiszT2doT1();
 
-   
-   
+ 
   if(Wybor == 3){
      // WYPISUJE 3 
      return 0;
@@ -87,9 +95,6 @@ int main(){
     // Wypisuje 2
      Sprzedaj();
    }
-  if(Wybor == '\n'){
-   main();
-  }
 
    system("sleep 1");
 
@@ -99,7 +104,7 @@ return 0;
 
 void Rysowanie(){
   for (int i = 0; i < 24; i++){
-    for(int k = 0; k < 100; k++){
+    for(int k = 0; k < 96; k++){
   
      if(tab[i][k] != 'X'){
      tab[i][k] = ' ';
@@ -160,7 +165,7 @@ void Rysowanie(){
 
 void Wypisz(){
   for(int i = 0; i < 24; i++){
-    for(int k = 0; k < 100;k++){
+    for(int k = 0; k < 96;k++){
       printf("%c",tab[i][k]);
       if(k == 65 && i ==1){
          printf("DANE: ");
@@ -222,10 +227,9 @@ void Wypisz(){
 	Reset();
       }
    // Wybrano: 
-      if(k ==2 && i == 23){
+      if(k ==1 && i == 23){
         printf("Wybrano: ");
-	scanf("%d", &Wybor);
-	//if((clock() - timeStart) / CLOCKS_PER_SEC >= 10)
+ 	  scanf("%d", &Wybor);
 	printf("Ladowanie...");
       }
      // Wartosc bitcoina
@@ -242,8 +246,8 @@ void Wypisz(){
       }
 
       if(i == 23 && k == 0){
-        printf("TIME|TIME|TIME|");
-        Sekundy++;
+        printf("TIME!|TIME|TIME|");
+	Sekundy++;
 	printf("Sekundy: %2d| ",Sekundy);
 	if(Sekundy == 60){
           Minuty++;
@@ -262,7 +266,7 @@ void Wypisz(){
           printf("Godzina: %2d|",Godziny);
 	}
 
-	printf("TIME|TIME|TIME|");
+	printf("TIME|TIME|TIME!|");
 
       }
 
@@ -317,6 +321,7 @@ void Sprawdza(){
   int k = 64;
   for(int i = 0; i < 22; i++){
     if(tab[i][k] == 'X'){
+      Sekundy = -1;
       k = 3;
       Czyszczenie(i, k);
     }
@@ -380,3 +385,108 @@ printf("%c[%dm",0x1B,GREEN);
 void Niebieski(){
   printf("%c[%dm",0x1B,BLUE);
 }
+// Koniec funkcji kolorow
+
+
+//############### FUNKCJE ODPOWIADAJACE ZA INTRO ###################
+
+void intro(){
+  for(int i = 0; i < 25; i++){
+    for(int k = 0; k < 100; k++){
+      Tabintra[i][k] = '-';
+      
+      if(i == 12){
+       Tabintra[i][k] = '*';
+      }
+      // T
+      if(i == 13 && (k >= 36 && k <= 40)){
+        for(int k = 36; k <= 40; k++){
+	  Tabintra[i][k] = 'T';
+	}
+      }
+
+      if(k == 38 && (i >=13 && i <= 17)){
+        for(int i = 13; i <= 17; i++){
+	  Tabintra[i][k] = 'T';
+	}
+      }
+     // T
+     
+     //H
+     if((k == 45 || k == 51) && (i >=13 && i <= 17)){
+       for(int i = 13; i <= 17; i++){
+         Tabintra[i][k] = 'H';
+       }
+     }
+     
+     if(i == 15 &&(k >= 45 && k <= 51)){
+       for(int k = 45; k <= 51; k++){
+         Tabintra[i][k] = 'H';
+       }
+     }
+     //H
+     
+     //E
+     if(k == 56 &&(i >= 13 && i <= 17)){
+       for(int i = 13; i <= 17; i++){
+         Tabintra[i][k] = 'E';
+       }
+     }
+
+     if((i == 13 || i == 15 || i==17) && (k >= 56 && k <= 63)){
+       for(int k = 56; k <= 63; k++){
+         Tabintra[i][k] = 'E';
+       }
+     }
+     //E
+
+     // M
+     if((k == 16 || k == 32) && (i >= 13 && i <= 23)){
+       for(int i =13; i <= 23; i++){
+         Tabintra[i][k] = 'M';
+       }
+     }
+
+     if(i == 13 && k == 17){
+         for(int j = 13; j < 20;j++){
+           for(int h = 17; h < 24;h++){
+             Tabintra[j][h] = 'M';
+	   }
+	 }
+     }
+     // M
+
+      if(k == 0 || k == 33 || k==66 || k == 99){
+        Tabintra[i][k] = '|';
+      }
+
+      if( i >= 0 && i <12 &&( (k == 49 || k == 50 ) || (k== 16 || k == 17) || (k == 82 || k == 83) ) ){
+        Tabintra[i][k] = '$';
+      }
+
+    }
+  }
+}
+
+void WypiszIntro(){
+  for(int i = 0; i < 25; i++){
+   // system("sleep 0.25");
+    for(int k = 0; k <100; k++){
+    
+       if(Tabintra[i][k] == '-'){
+         Niebieski();
+       }
+
+       if(Tabintra[i][k] == '$'){
+         Zielony();
+       }
+       
+      printf("%c",Tabintra[i][k]);
+      Reset();
+    }
+    printf("\n");
+  }
+  scanf("%d",&Wybor);
+}
+//Koniec funkcji odpowiadajacych za intro
+
