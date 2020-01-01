@@ -1,14 +1,17 @@
-//14.12.2019/15.12.2019/16.12.2019 Gra w maklera poczatkowo masz 500 $ i poprostu gra dopki chcesz :p
-// Rozmiar konsoli ma byc 130x30 !! Musze znalezcz zamiennik windows.h na linuxie :P
-// Jednak Gra bedzie konczyc sie az uzytkownik zdobedzie milion $$ bo mam fajny pomysl na ekran koncowy :P
-// 18.12.1019 ogolnie gra jest skonczona w 90% ale chce jeszcze zrobic cos w stylu intra oraz mozliwosc dania własnego Nick. 
-// A takze naprawic brzydkie bugi (wizualne)
+/*
+ Dokońćzyć intro
+ Zrobić koniec (KIedy wygrywasz)
+ Zrobic animacj gdy wychodzisz/przegrywasz
+ Zrobic system zapisu rankingu i by byl pokazany na koncu [Przez pliki tekstowe]
+ Znalezc funkcje non-blocking by wykres dzialal cały czas : D.
+
+*/
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <unistd.h>
-#include <curses.h>
+//#include <ncurses.h>
 
 // Definuje kolory na linuxie nie musze używać osobnej biblioteki więc poprostu skorzystałem z tego
 
@@ -31,6 +34,8 @@ void Sprzedaj();
 void Reset(); // Zwykły Kolor
 void Zielony();
 void Niebieski();
+void Czerwony();
+
 
 void intro(); // Animacja napisu $$$ i MAKLER
 void WypiszIntro();
@@ -46,7 +51,6 @@ int WartoscMax = 200;
 int WartoscMin = 0;
 int WartoscZapis = 0;
 int Brakuje = 1000000;
-int timeStart;
 
 //Zmienne do liczenia czasu (Time)
 int Sekundy = -1; 
@@ -60,6 +64,9 @@ int AktualnaCena = 150; // Aktualna cena 1 bit
 int Saldo = 0; // Saldo jest liczone co cykl wykonujacy main
 
 int main(){
+
+  puts("\x1B[8;26;100t"); // kod kotrolny xterm-a; \x1B-ESC 
+
   system("clear");
   intro();
   WypiszIntro();
@@ -372,6 +379,7 @@ void Sprzedaj(){
   }
 }
 
+
 // Funkcje odpowiadajace za Kolor/Intro/Koniec gry
 
 void Reset(){
@@ -385,6 +393,11 @@ printf("%c[%dm",0x1B,GREEN);
 void Niebieski(){
   printf("%c[%dm",0x1B,BLUE);
 }
+
+void Czerwony(){
+  printf("%c[%dm",0x1B,31);
+}
+
 // Koniec funkcji kolorow
 
 
@@ -393,10 +406,10 @@ void Niebieski(){
 void intro(){
   for(int i = 0; i < 25; i++){
     for(int k = 0; k < 100; k++){
-      Tabintra[i][k] = '-';
+      Tabintra[i][k] =  '-';
       
       if(i == 12){
-       Tabintra[i][k] = '*';
+      // Tabintra[i][k] = '*';
       }
       // T
       if(i == 13 && (k >= 36 && k <= 40)){
@@ -447,17 +460,120 @@ void intro(){
        }
      }
 
-     if(i == 13 && k == 17){
-         for(int j = 13; j < 20;j++){
-           for(int h = 17; h < 24;h++){
-             Tabintra[j][h] = 'M';
-	   }
-	 }
+     if(i == 20){
+       int j = 20;
+       for(int h = 24; h > 16; h--){
+         Tabintra[j][h] = 'M';
+	 j--;
+       }
+
+       j = 20;
+       for(int h = 24; h < 32; h++){
+         Tabintra[j][h] = 'M';
+	 j--;
+       }
      }
      // M
+     
+     //A
+     if(k==33 && i == 24){
+       int j = 23;
+       for(int h = 35; h < 40;h++){
+         Tabintra[j][h] = 'A';
+	 j--;
+       }
+      j = 23;
 
+      for(int h = 43; h >= 40;h--){
+        Tabintra[j][h] = 'A';
+	j--;
+      }
+     }
+
+     if((k >= 36 && k<=41) && i == 22 ){
+         Tabintra[i][k] = 'A';
+     }
+     //A
+
+     //K
+     if(k == 45 && i <= 23 && i >= 19 ){
+         Tabintra[i][k] = 'K';
+     }
+
+     if(i == 22 && k == 46){
+       int j = 22;
+       for(int h = 45; h < 49;h++){
+         Tabintra[j][h] = 'K';
+	 j--;
+       }
+     }
+
+     if(i == 23 && k == 50){
+       int j = 23;
+       for(int h = 50; h > 46;h--){
+         Tabintra[j][h] = 'K';
+	 j--;
+       }
+     }
+     //K
+     
+     //L
+       if(i >= 19 && i <= 23 && k == 52 ){
+         Tabintra[i][k] = 'L';
+       }
+
+       if(i == 23 && k>= 53 && k <= 57){
+         Tabintra[i][k] = 'L';
+       }
+
+     //L
+     
+     //E
+       if(i>= 19 && i <= 23 && k == 59){
+         Tabintra[i][k] = 'E';
+       }
+       if((i == 19 || i ==21 || i == 23) && k >= 59 && k <= 64){
+         Tabintra[i][k] = 'E';
+       }
+
+     //E
+     
+     //R
+       if(k == 67 && i >= 13 && i <= 23){
+         Tabintra[i][k] = 'R';
+       }
+
+      
+	 int j = 13;
+	 for(int h = 68; h <= 75;h++){
+           Tabintra[j][h] = 'R';
+	   Tabintra[j][h+1] = 'R';
+	   Tabintra[j][h+2] = 'R';
+	   h++;
+	   h++;
+	   j++;
+	 }
+
+       j = 18;
+       for(int h = 68; h <= 75;h++){
+         Tabintra[j][h] = 'R';
+         Tabintra[j][h+1] = 'R';
+         Tabintra[j][h+2] = 'R';
+         h++;
+         h++;
+         j--;
+       }
+
+       if(i == 24 && k == 68){
+         int j = 24;
+	 for(int h = 76; h > 69;h--){
+	   Tabintra[j][h] = 'R';
+	   j--;
+	 }
+       }
+     //R
       if(k == 0 || k == 33 || k==66 || k == 99){
-        Tabintra[i][k] = '|';
+       // Tabintra[i][k] = '|';
       }
 
       if( i >= 0 && i <12 &&( (k == 49 || k == 50 ) || (k== 16 || k == 17) || (k == 82 || k == 83) ) ){
@@ -479,6 +595,10 @@ void WypiszIntro(){
 
        if(Tabintra[i][k] == '$'){
          Zielony();
+       }
+
+       if(Tabintra[i][k] != '$' && Tabintra[i][k] != '-'){
+         Czerwony();
        }
        
       printf("%c",Tabintra[i][k]);
