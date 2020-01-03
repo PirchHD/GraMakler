@@ -18,6 +18,7 @@
 #define GREEN 32
 #define BLACK 30
 #define BLUE 34
+#define YELLOW 33
 
 //Koniec Definiowania Kolorow
 void Rysowanie();  // Rysuje: | - i +
@@ -34,7 +35,7 @@ void Sprzedaj();
 void Reset(); // Zwykły Kolor
 void Zielony();
 void Niebieski();
-void Czerwony();
+void Zolty();
 
 
 void intro(); // Animacja napisu $$$ i MAKLER
@@ -42,7 +43,7 @@ void WypiszIntro();
 
 char tab[25][100]; // Jakbym wczesniej pomyslal na temat działaniem programu jedna tablica by wystarczyła :D
 char tab2[25][100];
-char Tabintra[25][100];
+char Tabintra[28][100];
 char Nazwa[]="PirchHD";
 
 int Dolar = 500;
@@ -51,6 +52,7 @@ int WartoscMax = 200;
 int WartoscMin = 0;
 int WartoscZapis = 0;
 int Brakuje = 1000000;
+int ZapiszBrakuje = 1000000;
 
 //Zmienne do liczenia czasu (Time)
 int Sekundy = -1; 
@@ -65,14 +67,15 @@ int Saldo = 0; // Saldo jest liczone co cykl wykonujacy main
 
 int main(){
 
-  puts("\x1B[8;26;100t"); // kod kotrolny xterm-a; \x1B-ESC 
+  puts("\x1B[8;28;100t"); // kod kotrolny xterm-a; \x1B-ESC 
 
   system("clear");
+
   intro();
   WypiszIntro();
 
-  while(Dolar != 1000000){
-
+  while(Saldo != 1000000){
+    puts("\x1B[8;25;140t");
    system("clear");
    
    WartoscZapis = WartoscMax; 
@@ -89,7 +92,8 @@ int main(){
    Wypisz();
    ZapiszT2doT1();
 
- 
+  
+
   if(Wybor == 3){
      // WYPISUJE 3 
      return 0;
@@ -105,6 +109,7 @@ int main(){
 
    system("sleep 1");
 
+   Brakuje = ZapiszBrakuje;
   }
 return 0;
 }
@@ -193,7 +198,7 @@ void Wypisz(){
 
       if(k == 66 && i == 4){
 	Niebieski();
-	Brakuje = Brakuje - Saldo;
+	Brakuje = ZapiszBrakuje - Saldo;
         printf("+Do miliona brakuje: %d", Brakuje);
 	Reset();
       }
@@ -292,15 +297,15 @@ void Wykres(){
    int x = 0,dodaje=0; 
    tab[StartI][StartK] = 'X';
    x = rand()%101;
-   if(x <= 0 ){
+   if(x <= 60 ){
      dodaje = -1;
      	AktualnaCena = AktualnaCena + 5;
    }
-   if(x > 1 && x <=2){
+   if(x > 60 && x <=90){
      dodaje = 1;
      AktualnaCena = AktualnaCena - 5;
    }
-   if(x > 2){ 
+   if(x > 90){ 
      dodaje = 0;
    }
   StartI = StartI + dodaje;
@@ -343,7 +348,7 @@ void Sprawdza(){
     }
 
     int i = 0;
-    if(tab[i][k] == 'X'){ // Naprawic ten if !! gora 
+    if(tab[i][k] == 'X'){ 
       i = 21;
      WartoscMax = WartoscMax + 105;
      Czyszczenie(i, k);
@@ -394,8 +399,8 @@ void Niebieski(){
   printf("%c[%dm",0x1B,BLUE);
 }
 
-void Czerwony(){
-  printf("%c[%dm",0x1B,31);
+void Zolty(){
+  printf("%c[%dm",0x1B,YELLOW);
 }
 
 // Koniec funkcji kolorow
@@ -404,35 +409,32 @@ void Czerwony(){
 //############### FUNKCJE ODPOWIADAJACE ZA INTRO ###################
 
 void intro(){
-  for(int i = 0; i < 25; i++){
+  for(int i = 0; i < 28; i++){
     for(int k = 0; k < 100; k++){
       Tabintra[i][k] =  '-';
       
-      if(i == 12){
-      // Tabintra[i][k] = '*';
-      }
       // T
-      if(i == 13 && (k >= 36 && k <= 40)){
+      if(i == 16 && (k >= 36 && k <= 40)){
         for(int k = 36; k <= 40; k++){
 	  Tabintra[i][k] = 'T';
 	}
       }
 
-      if(k == 38 && (i >=13 && i <= 17)){
-        for(int i = 13; i <= 17; i++){
+      if(k == 38 && (i >=16 && i <= 20)){
+        for(int i = 16; i <= 20; i++){
 	  Tabintra[i][k] = 'T';
 	}
       }
      // T
      
      //H
-     if((k == 45 || k == 51) && (i >=13 && i <= 17)){
-       for(int i = 13; i <= 17; i++){
+     if((k == 45 || k == 51) && (i >=16 && i <= 20)){
+       for(int i = 16; i <= 20; i++){
          Tabintra[i][k] = 'H';
        }
      }
      
-     if(i == 15 &&(k >= 45 && k <= 51)){
+     if(i == 18 &&(k >= 45 && k <= 51)){
        for(int k = 45; k <= 51; k++){
          Tabintra[i][k] = 'H';
        }
@@ -440,13 +442,13 @@ void intro(){
      //H
      
      //E
-     if(k == 56 &&(i >= 13 && i <= 17)){
-       for(int i = 13; i <= 17; i++){
+     if(k == 56 &&(i >= 16 && i <= 20)){
+       for(int i = 16; i <= 20; i++){
          Tabintra[i][k] = 'E';
        }
      }
 
-     if((i == 13 || i == 15 || i==17) && (k >= 56 && k <= 63)){
+     if((i == 16 || i == 18 || i==20) && (k >= 56 && k <= 63)){
        for(int k = 56; k <= 63; k++){
          Tabintra[i][k] = 'E';
        }
@@ -454,21 +456,21 @@ void intro(){
      //E
 
      // M
-     if((k == 16 || k == 32) && (i >= 13 && i <= 23)){
-       for(int i =13; i <= 23; i++){
+     if((k == 20 || k == 32) && (i >= 21 && i <= 26)){
+       for(int i =21; i <= 26; i++){
          Tabintra[i][k] = 'M';
        }
      }
 
-     if(i == 20){
-       int j = 20;
-       for(int h = 24; h > 16; h--){
+     if(i == 25){
+       int j = 25;
+       for(int h = 26; h > 20; h--){
          Tabintra[j][h] = 'M';
 	 j--;
        }
 
-       j = 20;
-       for(int h = 24; h < 32; h++){
+       j = 25;
+       for(int h = 26; h < 32; h++){
          Tabintra[j][h] = 'M';
 	 j--;
        }
@@ -476,13 +478,13 @@ void intro(){
      // M
      
      //A
-     if(k==33 && i == 24){
-       int j = 23;
+     if(k==33 && i == 27){
+       int j = 26;
        for(int h = 35; h < 40;h++){
          Tabintra[j][h] = 'A';
 	 j--;
        }
-      j = 23;
+      j = 26;
 
       for(int h = 43; h >= 40;h--){
         Tabintra[j][h] = 'A';
@@ -490,26 +492,26 @@ void intro(){
       }
      }
 
-     if((k >= 36 && k<=41) && i == 22 ){
+     if((k >= 36 && k<=41) && i == 25 ){
          Tabintra[i][k] = 'A';
      }
      //A
 
      //K
-     if(k == 45 && i <= 23 && i >= 19 ){
+     if(k == 45 && i <= 26 && i >= 22 ){
          Tabintra[i][k] = 'K';
      }
 
-     if(i == 22 && k == 46){
-       int j = 22;
+     if(i == 25 && k == 46){
+       int j = 25;
        for(int h = 45; h < 49;h++){
          Tabintra[j][h] = 'K';
 	 j--;
        }
      }
 
-     if(i == 23 && k == 50){
-       int j = 23;
+     if(i == 26 && k == 50){
+       int j = 26;
        for(int h = 50; h > 46;h--){
          Tabintra[j][h] = 'K';
 	 j--;
@@ -518,75 +520,92 @@ void intro(){
      //K
      
      //L
-       if(i >= 19 && i <= 23 && k == 52 ){
+       if(i >= 21 && i <= 26 && k == 52 ){
          Tabintra[i][k] = 'L';
        }
 
-       if(i == 23 && k>= 53 && k <= 57){
+       if(i == 26 && k>= 53 && k <= 57){
          Tabintra[i][k] = 'L';
        }
 
      //L
      
      //E
-       if(i>= 19 && i <= 23 && k == 59){
+       if(i>= 22 && i <= 26 && k == 59){
          Tabintra[i][k] = 'E';
        }
-       if((i == 19 || i ==21 || i == 23) && k >= 59 && k <= 64){
+       if((i == 22 || i ==24 || i == 26) && k >= 59 && k <= 64){
          Tabintra[i][k] = 'E';
        }
 
      //E
      
      //R
-       if(k == 67 && i >= 13 && i <= 23){
+       if(k == 67 && i >= 20 && i <= 26){
          Tabintra[i][k] = 'R';
        }
 
       
-	 int j = 13;
-	 for(int h = 68; h <= 75;h++){
+	 int j = 20;
+	 for(int h = 68; h <= 73;h++){
            Tabintra[j][h] = 'R';
 	   Tabintra[j][h+1] = 'R';
-	   Tabintra[j][h+2] = 'R';
 	   h++;
 	   h++;
 	   j++;
 	 }
 
-       j = 18;
-       for(int h = 68; h <= 75;h++){
+       j = 23;
+       for(int h = 68; h <= 73;h++){
          Tabintra[j][h] = 'R';
          Tabintra[j][h+1] = 'R';
-         Tabintra[j][h+2] = 'R';
          h++;
          h++;
          j--;
        }
 
-       if(i == 24 && k == 68){
-         int j = 24;
-	 for(int h = 76; h > 69;h--){
+       if(i == 27 && k == 73){
+         int j = 26;
+	 for(int h = 73; h > 69;h--){
 	   Tabintra[j][h] = 'R';
 	   j--;
 	 }
        }
      //R
-      if(k == 0 || k == 33 || k==66 || k == 99){
-       // Tabintra[i][k] = '|';
-      }
 
-      if( i >= 0 && i <12 &&( (k == 49 || k == 50 ) || (k== 16 || k == 17) || (k == 82 || k == 83) ) ){
+      // $$$$$$$$$$$
+      if( i >= 0 && i <15 &&( (k == 49 || k == 50 ) || (k== 16 || k == 17) || (k == 82 || k == 83) ) ){
         Tabintra[i][k] = '$';
       }
 
+      if( (i == 1 || i == 7 || i == 13 ) && ( (k >= 51 && k <= 52) || (k >= 47 && k <= 48) || (k >= 18 && k <= 19) || (k >= 14 && k <= 15) || (k >= 84 && k <= 85) || (k >= 80 && k <= 81) ) ){
+        Tabintra[i][k] = '$';
+      }
+
+      if( i == 6  && ( (k >= 45 && k <= 46) || (k >= 12 && k <= 13) || (k >= 78 && k <= 79) ) ){
+        Tabintra[i][k] = '$';
+      }
+
+     if( i == 8 && ( (k >= 53 && k <= 54) || (k >= 20 && k <= 21) || (k >= 86 && k <= 87) ) ){
+       Tabintra[i][k] = '$';
+     }
+
+     if( ( i == 2 || i == 12)  && ( (k>= 53 && k <= 54) || (k >= 45 && k <= 46) ||(k >= 12 && k <= 13) || (k >= 20 && k <= 21) || (k >= 86 && k <= 87) || (k >= 78 && k <= 79) )){
+       Tabintra[i][k] = '$';
+     }
+
+     if( ( (i >= 3 && i <= 5) || (i >= 9 && i <= 11) ) && ( (k >= 55 && k <= 56) || (k >= 43 && k <= 44 ) || (k>= 22 && k <= 23) || (k >= 10 && k <= 11) || (k >= 88 && k <= 89) || (k >= 76 && k <= 77))){
+       Tabintra[i][k] = '$';
+     }
+
+      //$$$$$$$$$$$$$
     }
   }
 }
 
 void WypiszIntro(){
-  for(int i = 0; i < 25; i++){
-   // system("sleep 0.25");
+  for(int i = 0; i < 28; i++){
+    system("sleep 0.01");
     for(int k = 0; k <100; k++){
     
        if(Tabintra[i][k] == '-'){
@@ -598,7 +617,7 @@ void WypiszIntro(){
        }
 
        if(Tabintra[i][k] != '$' && Tabintra[i][k] != '-'){
-         Czerwony();
+         Zolty();
        }
        
       printf("%c",Tabintra[i][k]);
@@ -606,7 +625,6 @@ void WypiszIntro(){
     }
     printf("\n");
   }
-  scanf("%d",&Wybor);
 }
 //Koniec funkcji odpowiadajacych za intro
 
