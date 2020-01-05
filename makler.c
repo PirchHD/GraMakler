@@ -11,7 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-//#include <ncurses.h>
+#include <unistd.h>
+#include <poll.h>
 
 // Definuje kolory na linuxie nie musze używać osobnej biblioteki więc poprostu skorzystałem z tego
 
@@ -59,7 +60,7 @@ int Sekundy = -1;
 int Minuty = 0;
 int Godziny = 0;
 
-int Wybor = 0; // WYBOR CO ZROBISZ KUPISZ - 1 SPRZEDASZ- 2 EXIT - 3 NIC - DALEJ WYKONUJE FUNKCJE MAIN
+char Wybor; // WYBOR CO ZROBISZ KUPISZ - 1 SPRZEDASZ- 2 EXIT - 3 NIC - DALEJ WYKONUJE FUNKCJE MAIN
 int StartI=10; //  OD TEGO ZACZYNA RYSOWAC FUNKCJA
 int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA
 int AktualnaCena = 150; // Aktualna cena 1 bit
@@ -241,8 +242,20 @@ void Wypisz(){
    // Wybrano: 
       if(k ==1 && i == 23){
         printf("Wybrano: ");
- 	  scanf("%d", &Wybor);
-	printf("Ladowanie...");
+	int s =1;
+	while(s){
+	  struct pollfd mypoll = {STDIN_FILENO,POLLIN|POLLPRI};
+	  if(poll(&mypoll,1,2000)){
+	    scanf("%c",&Wybor);
+	    if(Wybor == '1'){
+	      s = 0;
+	      Kupuj();
+	    }
+	  }
+	  else{
+	    s = 0;
+	  }
+	}
       }
      // Wartosc bitcoina
       if(i != 23 && i != 22 && i !=0){
