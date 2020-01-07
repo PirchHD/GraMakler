@@ -1,10 +1,7 @@
 /*
- Dokońćzyć intro
  Zrobić koniec (KIedy wygrywasz)
  Zrobic animacj gdy wychodzisz/przegrywasz
  Zrobic system zapisu rankingu i by byl pokazany na koncu [Przez pliki tekstowe]
- Znalezc funkcje non-blocking by wykres dzialal cały czas : D.
-
 */
 
 
@@ -32,12 +29,18 @@ void Czyszczenie(int ZapisaneI,int ZapisaneK);
 void Kupuj();
 void Sprzedaj();
 
+//Wypisuje 1/2/3
+void Wypisz_1();
+void Wypisz_2();
+void Wypisz_3();
+
 //funkcje Koloru
 void Reset(); // Zwykły Kolor
 void Zielony();
 void Niebieski();
 void Zolty();
 
+void Tutorial();
 
 void intro(); // Animacja napisu $$$ i MAKLER
 void WypiszIntro();
@@ -45,6 +48,7 @@ void WypiszIntro();
 char tab[25][100]; // Jakbym wczesniej pomyslal na temat działaniem programu jedna tablica by wystarczyła :D
 char tab2[25][100];
 char Tabintra[28][100];
+
 char Nazwa[]="PirchHD";
 
 int Dolar = 500;
@@ -56,15 +60,17 @@ int Brakuje = 1000000;
 int ZapiszBrakuje = 1000000;
 
 //Zmienne do liczenia czasu (Time)
-int Sekundy = -1; 
+int Sekundy = 0; 
 int Minuty = 0;
 int Godziny = 0;
 
-char Wybor; // WYBOR CO ZROBISZ KUPISZ - 1 SPRZEDASZ- 2 EXIT - 3 NIC - DALEJ WYKONUJE FUNKCJE MAIN
+char Wybor[1]; // WYBOR CO ZROBISZ KUPISZ - 1 SPRZEDASZ- 2 EXIT - 3 NIC - DALEJ WYKONUJE FUNKCJE MAIN
 int StartI=10; //  OD TEGO ZACZYNA RYSOWAC FUNKCJA
 int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA
 int AktualnaCena = 150; // Aktualna cena 1 bit
 int Saldo = 0; // Saldo jest liczone co cykl wykonujacy main
+
+int s;
 
 int main(){
 
@@ -75,8 +81,12 @@ int main(){
   intro();
   WypiszIntro();
 
+  system("clear");
+
+  Tutorial();
+
   while(Saldo != 1000000){
-    puts("\x1B[8;25;140t");
+   puts("\x1B[8;25;140t");
    system("clear");
    
    WartoscZapis = WartoscMax; 
@@ -93,23 +103,6 @@ int main(){
    Wypisz();
    ZapiszT2doT1();
 
-  
-
-  if(Wybor == 3){
-     // WYPISUJE 3 
-     return 0;
-   }
-   if(Wybor == 1){
-     //Wypisuje 1
-     Kupuj();
-   }
-   if(Wybor == 2){
-    // Wypisuje 2
-     Sprzedaj();
-   }
-
-   system("sleep 1");
-
    Brakuje = ZapiszBrakuje;
   }
 return 0;
@@ -118,20 +111,31 @@ return 0;
 void Rysowanie(){
   for (int i = 0; i < 24; i++){
     for(int k = 0; k < 96; k++){
-  
+      
+      if(Wybor[0] == '1'){
+        Wypisz_1();
+      }
+      if(Wybor[0] == '2'){
+        Wypisz_2();
+      }
+
      if(tab[i][k] != 'X'){
      tab[i][k] = ' ';
      }
 
-     if(i != 23){
       if(k == 64 || k == 0 || k == 1){
          tab[i][k] = '|';
       }
-     }
 
-      if( i == 22 || i == 0 ){
+      if( i == 0 ){
         if(k != 0 && k!= 1)
         tab[i][k] = '-';
+      }
+
+      if(i == 22){
+        if(k >= 2 && k <= 64){
+	  tab[i][k] = '-';
+	}
       }
 
       if(k == 64 && i == 5){
@@ -173,6 +177,65 @@ void Rysowanie(){
       }
      
     }  
+  }
+}
+
+void Wypisz_1(){
+ for(int i = 14; i < 24; i ++){
+   for(int k = 65;k < 96; k++){
+     if( (i == 21 || i == 22) && (k >= 74 && k <= 85 )){
+       tab[i][k] = '1';
+     }
+    if((k >= 79 && k <= 81) && i != 14){
+      tab[i][k] = '1';
+     }
+
+    
+      tab[16][76] = '1';
+      tab[16][77] = '1';
+      tab[16][78] = '1';
+
+      tab[17][75] = '1';
+      tab[17][76] = '1';
+      tab[17][74] = '1';
+   }
+ }
+}
+
+void Wypisz_2(){
+  for(int i = 14; i < 24; i++){
+    for(int k = 65; k < 96; k ++){
+
+      if( (i == 21 || i == 22) && (k >= 74 && k <= 85) ){
+        tab[i][k] = '2';
+      }
+
+      if(i == 20 && k == 74){
+	int j = 20;
+        for(int k = 74; k <=83;k++){
+	  tab[j][k] = '2';
+	  tab[j][k+1] = '2';
+	  tab[j][k+2] = '2';
+	  k++;
+	  j--;
+	}
+      }
+
+       tab[16][74] = '2';
+       tab[16][75] = '2';
+       tab[16][76] = '2';
+
+       if(i == 15 && (k== 75 || k == 81)){
+         tab[i][k] = '2';
+	 tab[i][k+1] = '2';
+	 tab[i][k+2] = '2';
+       }
+
+       if(i==14 && k >= 76 && k <= 81){
+         tab[i][k] = '2';
+       }
+     
+    }
   }
 }
 
@@ -240,17 +303,25 @@ void Wypisz(){
 	Reset();
       }
    // Wybrano: 
-      if(k ==1 && i == 23){
-        printf("Wybrano: ");
-	int s =1;
+      if(k == 0 && i == 23){
+	s = 1;
+	Wybor[0] = '0';
 	while(s){
 	  struct pollfd mypoll = {STDIN_FILENO,POLLIN|POLLPRI};
-	  if(poll(&mypoll,1,2000)){
-	    scanf("%c",&Wybor);
-	    if(Wybor == '1'){
+	  if(poll(&mypoll,1,1000)){
+	    scanf("%1s",Wybor);
+	    if(Wybor[0] == '1'){
 	      s = 0;
 	      Kupuj();
 	    }
+	    if(Wybor[0] == '2'){
+	      s = 0;
+	      Sprzedaj();
+	    }
+	    if(Wybor[0] == '3'){
+	      exit(1);
+	    }
+	    else s = 0;
 	  }
 	  else{
 	    s = 0;
@@ -270,8 +341,9 @@ void Wypisz(){
 	 
       }
 
-      if(i == 23 && k == 0){
-        printf("TIME!|TIME|TIME|");
+      if(i == 22 && k == 95){
+	 printf("\n");
+	 printf("|TIME!|TIME|TIME|");
 	Sekundy++;
 	printf("Sekundy: %2d| ",Sekundy);
 	if(Sekundy == 60){
@@ -292,13 +364,12 @@ void Wypisz(){
 	}
 
 	printf("TIME|TIME|TIME!|");
-
+    
       }
 
       if(i == 22 && k == 0){
 	  printf("$$$$$");
       }
-
 
    }
   printf("\n");
@@ -327,16 +398,16 @@ void Wykres(){
 }
 
 void ZapiszT1doT2(){
-  for(int i = 0; i < 25; i ++){
-    for(int k = 0; k < 100; k++){
+  for(int i = 0; i < 24; i ++){
+    for(int k = 0; k < 96; k++){
       tab2[i][k] = tab[i][k];
     }
   }
 }
 
 void ZapiszT2doT1(){
-  for(int i = 0; i < 25; i ++){
-    for(int k = 0; k < 100; k++){
+  for(int i = 0; i < 24; i ++){
+    for(int k = 0; k < 96; k++){
       tab[i][k] = tab2[i][k];
     }
   }
@@ -618,7 +689,7 @@ void intro(){
 
 void WypiszIntro(){
   for(int i = 0; i < 28; i++){
-    system("sleep 0.01");
+    system("sleep 0.15");
     for(int k = 0; k <100; k++){
     
        if(Tabintra[i][k] == '-'){
@@ -641,3 +712,23 @@ void WypiszIntro(){
 }
 //Koniec funkcji odpowiadajacych za intro
 
+
+//?????????????????????? TUTORIAL ?????????????????????????
+void Tutorial(){
+  puts("\x1B[8;7;128t");
+  Zielony();
+  printf("Tutorial\n");
+  Reset();
+  printf("+ Gra polega na tym by w jak najmniejszym w czasie zarobic MILION $\n");
+    system("sleep 0.2");
+  printf("+ By zarabiać jak najszybciej kupuj BTC w jak najniższej cenie a sprzedawaj w jak najdrożej!\n");
+    system("sleep 0.2");
+  printf("+ klikaj 1-By kupować BTC ! Klikaj 2 - By sprzadawać BTC\n");
+    system("sleep 0.2");
+  printf("+ Gra ofieruję 3 tryby Easy/Normaln/Hard\n");
+    system("sleep 0.2");
+  printf("+ Pamietaj każdy tryb daje pewne ułatwienia/utrudnienia ale zarazem na zwiekszenie/zmniejszenie koncowego czasu ukonczenia Gry\n");
+    system("sleep 0.2");
+  printf("+ Baw się dobrze :D ! Kliknij ENTER by kontynuowac!");
+    getchar(); // getch by był dowolny przycisk zarazem bez entera. scanf - czeka na ente. getchar - czeka na entner getch - nie czeka na enter
+}
