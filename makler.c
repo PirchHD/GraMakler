@@ -1,5 +1,4 @@
 /*
- Zrobić koniec (KIedy wygrywasz)
  Zrobic animacj gdy wychodzisz/przegrywasz
  Zrobic system zapisu rankingu i by byl pokazany na koncu [Przez pliki tekstowe]
 */
@@ -45,13 +44,16 @@ void Tutorial();
 void intro(); // Animacja napisu $$$ i MAKLER
 void WypiszIntro();
 
+void Wygrana();
+
 char tab[25][100]; // Jakbym wczesniej pomyslal na temat działaniem programu jedna tablica by wystarczyła :D
 char tab2[25][100];
 char Tabintra[28][100];
+char TabWygrana[28][100];
 
 char Nazwa[]="PirchHD";
 
-int Dolar = 500;
+int Dolar = 1000000;
 int BTC = 0;
 int WartoscMax = 200;
 int WartoscMin = 0;
@@ -65,10 +67,10 @@ int Minuty = 0;
 int Godziny = 0;
 
 char Wybor[1]; // WYBOR CO ZROBISZ KUPISZ - 1 SPRZEDASZ- 2 EXIT - 3 NIC - DALEJ WYKONUJE FUNKCJE MAIN
-int StartI=10; //  OD TEGO ZACZYNA RYSOWAC FUNKCJA
-int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA
+int StartI=10; //  OD TEGO ZACZYNA RYSOWAC FUNKCJA btc
+int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA btc
 int AktualnaCena = 150; // Aktualna cena 1 bit
-int Saldo = 0; // Saldo jest liczone co cykl wykonujacy main
+int Saldo; // Saldo jest liczone co cykl wykonujacy main
 
 int s;
 
@@ -85,8 +87,8 @@ int main(){
 
   Tutorial();
 
-  while(Saldo != 1000000){
-   puts("\x1B[8;25;140t");
+  while(Saldo <= 1000000){
+   puts("\x1B[8;25;140t"); //Rozmiar okna 25 x 140
    system("clear");
    
    WartoscZapis = WartoscMax; 
@@ -105,6 +107,13 @@ int main(){
 
    Brakuje = ZapiszBrakuje;
   }
+
+  system("clear");
+
+  puts("\x1B[8;29;100t");
+
+  Wygrana();
+
 return 0;
 }
 
@@ -479,6 +488,10 @@ void Zielony(){
 printf("%c[%dm",0x1B,GREEN);
 }
 
+void Czerwony(){
+printf("%c[%dm",0x1B,31);
+}
+
 void Niebieski(){
   printf("%c[%dm",0x1B,BLUE);
 }
@@ -717,18 +730,175 @@ void WypiszIntro(){
 void Tutorial(){
   puts("\x1B[8;7;128t");
   Zielony();
+
+  printf("%c[%dm",0x1B,5);
+  printf("%c[%dm",0x1B,4);
+
   printf("Tutorial\n");
   Reset();
+
   printf("+ Gra polega na tym by w jak najmniejszym w czasie zarobic MILION $\n");
-    system("sleep 0.2");
   printf("+ By zarabiać jak najszybciej kupuj BTC w jak najniższej cenie a sprzedawaj w jak najdrożej!\n");
-    system("sleep 0.2");
-  printf("+ klikaj 1-By kupować BTC ! Klikaj 2 - By sprzadawać BTC\n");
-    system("sleep 0.2");
-  printf("+ Gra ofieruję 3 tryby Easy/Normaln/Hard\n");
-    system("sleep 0.2");
+  printf("+ klikaj 1-By kupować BTC ! Klikaj 2 - By sprzedawać BTC\n");
+  printf("+ Gra ofieruję 3 tryby "); 
+  Zielony(); printf("Easy"); Reset(); printf("/"); Zolty(); printf("Normaln"); Reset(); printf("/"); Czerwony(); printf("Hard\n"); Reset();
   printf("+ Pamietaj każdy tryb daje pewne ułatwienia/utrudnienia ale zarazem na zwiekszenie/zmniejszenie koncowego czasu ukonczenia Gry\n");
-    system("sleep 0.2");
   printf("+ Baw się dobrze :D ! Kliknij ENTER by kontynuowac!");
     getchar(); // getch by był dowolny przycisk zarazem bez entera. scanf - czeka na ente. getchar - czeka na entner getch - nie czeka na enter
 }
+
+//??????????????????????/KONIEC TUTORIAL????????????????????
+
+
+//$$$$$$$$$$$$$$$$$$$$$FUNKCJA WYGRANA$$$$$$$$$$$$$$$$$$$$$
+
+void Wygrana(){
+  for(int i = 0; i < 28; i++){
+    for(int k = 0; k < 100; k++){
+      TabWygrana[i][k] = '-';
+
+      //W
+      if( (i >= 16 && i <= 26) && (k == 2 || k == 16)){
+        TabWygrana[i][k] = 'W';
+      }
+
+      if(i == 26 && k == 9 ){
+	int j = 26;
+	for(int h = 3; h <= 8; h++){
+	  TabWygrana[j][h] = 'W';
+	  j--;
+	}
+      }
+
+      if(i == 26 && k == 14){
+        int j = 26;
+	for(int h = 14;h >= 9; h--){
+	  TabWygrana[j][h] = 'W';
+	  j--;
+	}
+      }
+      //W
+      
+      //I
+      if( (k == 19 || k == 20) &&  (i >= 16 && i <= 26 && i != 17) ){
+        TabWygrana[i][k] = 'I';
+      }
+      //I
+      
+      //N
+      if( (k == 23 || k == 33 || k == 36 || k == 46) && (i <= 26 && i >= 16)){
+        TabWygrana[i][k] = 'N';
+      }
+
+      if(i == 26 && k == 36){
+        int j = 26;
+        for(int h = 46; h >= 36;h--){
+          TabWygrana[j][h] = 'N';
+	  j--;
+        }
+      }
+
+      if(i == 26 && k == 33){
+      int j = 26;
+      for(int h = 33; h >= 23; h --){
+        TabWygrana[j][h] = 'N';
+	j--;
+      }
+      }
+      //N
+
+      //E
+      if(i>= 16 && i <= 26 && k == 49){
+        TabWygrana[i][k] = 'E';
+      }
+
+      if((i == 26 || i == 16 || i == 21) && k >= 49 && k <= 57){
+        TabWygrana[i][k] = 'E';
+      }
+      //E
+
+      //R
+      if(k == 60 && i >= 16 && i <= 26){
+        TabWygrana[i][k] = 'R';
+      }
+
+      
+       int j = 16;
+       for(int h = 61; h <= 68;h++){
+         TabWygrana[j][h] = 'R';
+	 TabWygrana[j][h+1] = 'R';
+	 h++;
+	 h++;
+	 j++;
+       }
+
+       j = 21;
+       for(int h = 61; h <= 68;h++){
+         TabWygrana[j][h] = 'R';
+         TabWygrana[j][h+1] = 'R';
+         h++;
+         h++;
+         j--;
+       }
+
+       if(i == 26 && k == 68){
+         int j = 26;
+	 for(int h = 67; h > 60;h--){
+	   TabWygrana[j][h] = 'R';
+	   j--;
+	 }
+       }
+     //R
+
+      // $$$$$$$$$$$
+      if( i >= 0 && i <15 &&( (k == 49 || k == 50 ) || (k== 16 || k == 17) || (k == 82 || k == 83) ) ){
+        TabWygrana[i][k] = '$';
+      }
+
+      if( (i == 1 || i == 7 || i == 13 ) && ( (k >= 51 && k <= 52) || (k >= 47 && k <= 48) || (k >= 18 && k <= 19) || (k >= 14 && k <= 15) || (k >= 84 && k <= 85) || (k >= 80 && k <= 81) ) ){
+        TabWygrana[i][k] = '$';
+      }
+
+      if( i == 6  && ( (k >= 45 && k <= 46) || (k >= 12 && k <= 13) || (k >= 78 && k <= 79) ) ){
+        TabWygrana[i][k] = '$';
+      }
+
+     if( i == 8 && ( (k >= 53 && k <= 54) || (k >= 20 && k <= 21) || (k >= 86 && k <= 87) ) ){
+       TabWygrana[i][k] = '$';
+     }
+
+     if( ( i == 2 || i == 12)  && ( (k>= 53 && k <= 54) || (k >= 45 && k <= 46) ||(k >= 12 && k <= 13) || (k >= 20 && k <= 21) || (k >= 86 && k <= 87) || (k >= 78 && k <= 79) )){
+       TabWygrana[i][k] = '$';
+     }
+
+     if( ( (i >= 3 && i <= 5) || (i >= 9 && i <= 11) ) && ( (k >= 55 && k <= 56) || (k >= 43 && k <= 44 ) || (k>= 22 && k <= 23) || (k >= 10 && k <= 11) || (k >= 88 && k <= 89) || (k >= 76 && k <= 77))){
+       TabWygrana[i][k] = '$';
+     }
+
+      //$$$$$$$$$$$$$
+    }
+  }
+  // WYPISUJE WYGRANA
+  for(int i = 0; i < 28; i++){
+    system("sleep 0.2");
+    for(int k = 0;k < 100;k++){
+      if(TabWygrana[i][k] == '-'){
+        Niebieski();
+      }
+      if(TabWygrana[i][k] != '-'){
+        Zolty();
+      }
+      if(TabWygrana[i][k] == '$'){
+        Zielony();
+      }
+
+      printf("%c",TabWygrana[i][k]);
+      Reset();
+    }
+    printf("\n");
+  }
+
+  // WYPISUJE WYGRANA
+}
+
+//$$$$$$$$$$$$$$$$$$$$$KONIEC  WYGRANA$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
