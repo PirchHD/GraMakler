@@ -31,7 +31,7 @@ void Sprzedaj();
 //Wypisuje 1/2/3
 void Wypisz_1();
 void Wypisz_2();
-void Wypisz_3();
+void Wypisz_Nic();
 
 //funkcje Koloru
 void Reset(); // Zwykły Kolor
@@ -41,19 +41,26 @@ void Zolty();
 
 void Tutorial();
 
+void Ustawienia_Prof();
+void Tryby();
+
 void intro(); // Animacja napisu $$$ i MAKLER
 void WypiszIntro();
 
 void Wygrana();
+void lose();
 
 char tab[25][100]; // Jakbym wczesniej pomyslal na temat działaniem programu jedna tablica by wystarczyła :D
 char tab2[25][100];
 char Tabintra[28][100];
 char TabWygrana[28][100];
+char Tablose[28][100];
 
-char Nazwa[]="PirchHD";
+char Nazwa[10];
+char Mode_Bot;
+char Tryb[]="Normal";
 
-int Dolar = 1000000;
+int Dolar = 500;
 int BTC = 0;
 int WartoscMax = 200;
 int WartoscMin = 0;
@@ -76,7 +83,7 @@ int s;
 
 int main(){
 
-  puts("\x1B[8;28;100t"); // kod kotrolny xterm-a; \x1B-ESC 
+ puts("\x1B[8;28;100t"); // kod kotrolny xterm-a; \x1B-ESC 
 
   system("clear");
 
@@ -87,8 +94,24 @@ int main(){
 
   Tutorial();
 
+  system("clear");
+  puts("\x1B[8;7;76"); // Gdybym chcial to zrobic jako biblioteke a nie kodu to uzylbyn ncourses.h :D
+
+  Ustawienia_Prof();
+
   while(Saldo <= 1000000){
    puts("\x1B[8;25;140t"); //Rozmiar okna 25 x 140
+   // Zapisuje Aktualne dane do Uzytkownik.txt
+     FILE *plik;
+     if((plik = fopen("Uzytkownik.txt","w")) == NULL){
+       printf("Bład pliku"); exit(2);
+     }
+
+     fprintf(plik,"%s",Nazwa);
+     fprintf(plik, " Wynik: %2d/%2d/%2d",Sekundy,Minuty,Godziny);
+     fprintf(plik," Saldo: %d ",Saldo);
+     fclose(plik);
+   // Koniec funkcji plikowych
    system("clear");
    
    WartoscZapis = WartoscMax; 
@@ -106,13 +129,24 @@ int main(){
    ZapiszT2doT1();
 
    Brakuje = ZapiszBrakuje;
+
+   //Sprawdza czy przegrales
+   if(Saldo <= 0 ){
+     lose();  
+   }
+
   }
 
   system("clear");
 
   puts("\x1B[8;29;100t");
 
+  system("clear");
+
   Wygrana();
+
+  //Sprawdza czy jestes w top 3
+  //Wypisuje Ranking 3 najlepsze wyniki 
 
 return 0;
 }
@@ -455,8 +489,8 @@ void Czyszczenie(int ZapisaneI, int ZapisaneK){
       tab[i][k] = ' ';
     }
   }
-  StartI=ZapisaneI;
-  StartK=ZapisaneK;
+    StartI=ZapisaneI;
+    StartK=ZapisaneK;
   tab[ZapisaneI][ZapisaneK] = 'X';
   tab2[ZapisaneI][ZapisaneK] = 'X';
   WartoscZapis = WartoscMax;
@@ -617,7 +651,7 @@ void intro(){
      //K
      
      //L
-       if(i >= 21 && i <= 26 && k == 52 ){
+       if(i >= 22 && i <= 26 && k == 52 ){
          Tabintra[i][k] = 'L';
        }
 
@@ -722,6 +756,7 @@ void WypiszIntro(){
     }
     printf("\n");
   }
+  system("sleep 2");
 }
 //Koniec funkcji odpowiadajacych za intro
 
@@ -902,3 +937,66 @@ void Wygrana(){
 }
 
 //$$$$$$$$$$$$$$$$$$$$$KONIEC  WYGRANA$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>FUNKCJA LOSE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+void lose(){
+  for(int i = 0; i < 28; i++){
+    for(int k = 0; k < 100;k++){
+      Tablose[i][k] = '-';
+
+      //L
+      if((i >= 22 && i <= 27) && k == 67){
+        Tablose[i][k] = 'L';
+      }
+        
+      //L
+    }
+  }
+
+  //Wypisuje lose
+  for(int i = 0; i <28; i++){
+    for(int k = 0; k < 100; k ++){
+      printf("%c",Tablose[i][k]);
+    }
+  }
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>> Koniec funkcji lose<<<<<<<<<<<<<<<<<<<<<<<<
+
+//Ustawienia poczatkowe 
+
+void Ustawienia_Prof(){
+  system("clear");
+  printf("Czy włączyć tryb bota ? (T/N)");
+  scanf("%c",&Mode_Bot);
+  if(Mode_Bot == 'T' || Mode_Bot == 't'){
+    printf("Nazwa użytkownika[max 10 znaków]: Bot_");
+    scanf("%s",Nazwa);
+    Tryby();
+  }
+  if(Mode_Bot == 'N' || Mode_Bot == 'n'){
+    printf("Nazwa użytkownika[max 10 znaków]: ");
+    scanf("%s",Nazwa);
+    Tryby();
+  }
+  else{ 
+    Ustawienia_Prof();
+  }
+}
+
+void Tryby(){
+  
+  Zielony(); printf("\t\t|EASY|\t"); Reset(); 
+  Zolty();  printf("\t\t|NORMAL|\t\t"); Reset();
+  Czerwony(); printf("|HARD|\n"); Reset();
+
+  Zielony(); printf("\t\t1000$\t"); Reset();
+  Zolty(); printf("\t\t  500"); Zielony(); printf("$\t\t\t"); Reset();
+  Czerwony(); printf(" 250"); Zielony(); printf("$\n"); Reset();
+
+  Zielony(); printf("         2 razy gorszy czas\t"); Reset();
+  Zolty(); printf("   Rzeczywisty czas");Reset();
+  Czerwony(); printf("       2 razy lepszy czas\n"); Reset();
+  scanf("%s",Tryb);
+}
+
+//Ustawienia poczatkowe
