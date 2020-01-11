@@ -3,35 +3,25 @@
  Zrobic system zapisu rankingu i by byl pokazany na koncu [Przez pliki tekstowe]
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 #include <poll.h>
 
-// Definuje kolory na linuxie nie musze używać osobnej biblioteki więc poprostu skorzystałem z tego
-
-#define GREEN 32
-#define BLACK 30
-#define BLUE 34
-#define YELLOW 33
-
-//Koniec Definiowania Kolorow
-void Rysowanie();  // Rysuje: | - i +
+void Rysowanie(char tab[25][100]);  // Rysuje: | - i +
 void Wypisz();    // wypisuje tablice oraz w danym punkcie wypisuje takie rzeczy jak np. DANE:
-void Wykres();   
-void ZapiszT1doT2();
-void ZapiszT2doT1();
-void Sprawdza();
-void Czyszczenie(int ZapisaneI,int ZapisaneK);
+void Wykres(char tab[25][100]);   
+void ZapiszT1doT2(char tab[25][100],char tab2[25][100]);
+void ZapiszT2doT1(char tab[25][100],char tab2[25][100]);
+void Sprawdza(char tab[25][100]);
+void Czyszczenie(int ZapisaneI,int ZapisaneK,char tab[25][100]);
 void Kupuj();
 void Sprzedaj();
 
-//Wypisuje 1/2/3
-void Wypisz_1();
-void Wypisz_2();
-void Wypisz_Nic();
+//Wypisuje 1/2/
+void Wypisz_1(char tab[25][100]);
+void Wypisz_2(char tab[25][100]);
 
 //funkcje Koloru
 void Reset(); // Zwykły Kolor
@@ -44,17 +34,11 @@ void Tutorial();
 void Ustawienia_Prof();
 void Tryby();
 
-void intro(); // Animacja napisu $$$ i MAKLER
-void WypiszIntro();
+void intro(char Tabintra[28][100]); // Animacja napisu $$$ i MAKLER
+void WypiszIntro(char Tabintra[28][100]);
 
-void Wygrana();
-void lose();
-
-char tab[25][100]; // Jakbym wczesniej pomyslal na temat działaniem programu jedna tablica by wystarczyła :D
-char tab2[25][100];
-char Tabintra[28][100];
-char TabWygrana[28][100];
-char Tablose[28][100];
+void Wygrana(char TabWygrana[28][100]);
+void lose(char Tablose[28][100]);
 
 char Nazwa[10];
 char Mode_Bot;
@@ -75,20 +59,22 @@ int Godziny = 0;
 
 char Wybor[1]; // WYBOR CO ZROBISZ KUPISZ - 1 SPRZEDASZ- 2 EXIT - 3 NIC - DALEJ WYKONUJE FUNKCJE MAIN
 int StartI=10; //  OD TEGO ZACZYNA RYSOWAC FUNKCJA btc
-int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA btc
-int AktualnaCena = 150; // Aktualna cena 1 bit
-int Saldo; // Saldo jest liczone co cykl wykonujacy main
-
-int s;
+int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA btc 
+int AktualnaCena = 150;
+int Saldo;
 
 int main(){
 
- puts("\x1B[8;28;100t"); // kod kotrolny xterm-a; \x1B-ESC 
+  puts("\x1B[8;28;100t"); // kod kotrolny xterm-a; \x1B-ESC 
 
   system("clear");
 
-  intro();
-  WypiszIntro();
+  char TabMain[28][100];
+  char tab[25][100];
+  char tab2[25][100];
+
+  intro(TabMain);
+  WypiszIntro(TabMain);
 
   system("clear");
 
@@ -118,21 +104,20 @@ int main(){
    WartoscMax = WartoscZapis;
   
    Reset();
-   
 
-   Rysowanie();
-   Wykres();
+   Rysowanie(tab);
+   Wykres(tab);
    WartoscMin = WartoscMax;
-   Sprawdza();
-   ZapiszT1doT2();
+   Sprawdza(tab);
+   ZapiszT1doT2(tab, tab2);
    Wypisz();
-   ZapiszT2doT1();
+   ZapiszT2doT1(tab, tab2);
 
    Brakuje = ZapiszBrakuje;
 
    //Sprawdza czy przegrales
    if(Saldo <= 0 ){
-     lose();  
+     lose(TabMain);  
    }
 
   }
@@ -143,7 +128,7 @@ int main(){
 
   system("clear");
 
-  Wygrana();
+  Wygrana(TabMain);
 
   //Sprawdza czy jestes w top 3
   //Wypisuje Ranking 3 najlepsze wyniki 
@@ -151,15 +136,15 @@ int main(){
 return 0;
 }
 
-void Rysowanie(){
+void Rysowanie(char tab[25][100]){
   for (int i = 0; i < 24; i++){
     for(int k = 0; k < 96; k++){
       
       if(Wybor[0] == '1'){
-        Wypisz_1();
+        Wypisz_1(tab);
       }
       if(Wybor[0] == '2'){
-        Wypisz_2();
+        Wypisz_2(tab);
       }
 
      if(tab[i][k] != 'X'){
@@ -223,7 +208,7 @@ void Rysowanie(){
   }
 }
 
-void Wypisz_1(){
+void Wypisz_1(char tab[25][100]){
  for(int i = 14; i < 24; i ++){
    for(int k = 65;k < 96; k++){
      if( (i == 21 || i == 22) && (k >= 74 && k <= 85 )){
@@ -245,7 +230,7 @@ void Wypisz_1(){
  }
 }
 
-void Wypisz_2(){
+void Wypisz_2(char tab[25][100]){
   for(int i = 14; i < 24; i++){
     for(int k = 65; k < 96; k ++){
 
@@ -282,7 +267,7 @@ void Wypisz_2(){
   }
 }
 
-void Wypisz(){
+void Wypisz(char tab[25][100]){
   for(int i = 0; i < 24; i++){
     for(int k = 0; k < 96;k++){
       printf("%c",tab[i][k]);
@@ -347,7 +332,7 @@ void Wypisz(){
       }
    // Wybrano: 
       if(k == 0 && i == 23){
-	s = 1;
+	int s = 1;
 	Wybor[0] = '0';
 	while(s){
 	  struct pollfd mypoll = {STDIN_FILENO,POLLIN|POLLPRI};
@@ -369,6 +354,7 @@ void Wypisz(){
 	  else{
 	    s = 0;
 	  }
+	  s = 0;
 	}
       }
      // Wartosc bitcoina
@@ -419,7 +405,7 @@ void Wypisz(){
   }
 }
 
-void Wykres(){
+void Wykres(char tab[25][100]){
 	// Od k =3 do k 73
    int x = 0,dodaje=0; 
    tab[StartI][StartK] = 'X';
@@ -435,12 +421,12 @@ void Wykres(){
    if(x > 90){ 
      dodaje = 0;
    }
-  StartI = StartI + dodaje;
+   StartI = StartI + dodaje;
    StartK++;
    tab[StartI][StartK] = 'X';
 }
 
-void ZapiszT1doT2(){
+void ZapiszT1doT2(char tab[25][100],char tab2[25][100]){
   for(int i = 0; i < 24; i ++){
     for(int k = 0; k < 96; k++){
       tab2[i][k] = tab[i][k];
@@ -448,7 +434,7 @@ void ZapiszT1doT2(){
   }
 }
 
-void ZapiszT2doT1(){
+void ZapiszT2doT1(char tab[25][100],char tab2[25][100]){
   for(int i = 0; i < 24; i ++){
     for(int k = 0; k < 96; k++){
       tab[i][k] = tab2[i][k];
@@ -456,13 +442,13 @@ void ZapiszT2doT1(){
   }
 }
 
-void Sprawdza(){
+void Sprawdza(char tab[25][100]){
   int k = 64;
   for(int i = 0; i < 22; i++){
     if(tab[i][k] == 'X'){
       Sekundy = -1;
       k = 3;
-      Czyszczenie(i, k);
+      Czyszczenie(i, k, tab);
     }
   }
 
@@ -471,19 +457,19 @@ void Sprawdza(){
     if(tab[i][k]  == 'X'){
       i = 1;
       WartoscMax=WartoscMax - 105;
-      Czyszczenie(i, k);
+      Czyszczenie(i, k, tab);
     }
 
     int i = 0;
     if(tab[i][k] == 'X'){ 
       i = 21;
      WartoscMax = WartoscMax + 105;
-     Czyszczenie(i, k);
+     Czyszczenie(i, k, tab);
     }
   }
 }
 
-void Czyszczenie(int ZapisaneI, int ZapisaneK){
+void Czyszczenie(int ZapisaneI, int ZapisaneK, char tab[25][100]){
   for(int i = 0; i < 25; i ++){
     for(int k = 0; k < 100; k ++){
       tab[i][k] = ' ';
@@ -492,9 +478,8 @@ void Czyszczenie(int ZapisaneI, int ZapisaneK){
     StartI=ZapisaneI;
     StartK=ZapisaneK;
   tab[ZapisaneI][ZapisaneK] = 'X';
-  tab2[ZapisaneI][ZapisaneK] = 'X';
   WartoscZapis = WartoscMax;
-  Rysowanie();
+  Rysowanie(tab);
 }
 
 void Kupuj(){
@@ -519,7 +504,7 @@ printf("%c[%dm",0x1B,0);
 }
 
 void Zielony(){
-printf("%c[%dm",0x1B,GREEN);
+printf("%c[%dm",0x1B,32);
 }
 
 void Czerwony(){
@@ -527,11 +512,11 @@ printf("%c[%dm",0x1B,31);
 }
 
 void Niebieski(){
-  printf("%c[%dm",0x1B,BLUE);
+  printf("%c[%dm",0x1B,34);
 }
 
 void Zolty(){
-  printf("%c[%dm",0x1B,YELLOW);
+  printf("%c[%dm",0x1B,44);
 }
 
 // Koniec funkcji kolorow
@@ -539,7 +524,7 @@ void Zolty(){
 
 //############### FUNKCJE ODPOWIADAJACE ZA INTRO ###################
 
-void intro(){
+void intro(char Tabintra[28][100]){
   for(int i = 0; i < 28; i++){
     for(int k = 0; k < 100; k++){
       Tabintra[i][k] =  '-';
@@ -734,7 +719,7 @@ void intro(){
   }
 }
 
-void WypiszIntro(){
+void WypiszIntro(char Tabintra[28][100]){
   for(int i = 0; i < 28; i++){
     system("sleep 0.15");
     for(int k = 0; k <100; k++){
@@ -787,7 +772,7 @@ void Tutorial(){
 
 //$$$$$$$$$$$$$$$$$$$$$FUNKCJA WYGRANA$$$$$$$$$$$$$$$$$$$$$
 
-void Wygrana(){
+void Wygrana(char TabWygrana[28][100]){
   for(int i = 0; i < 28; i++){
     for(int k = 0; k < 100; k++){
       TabWygrana[i][k] = '-';
@@ -939,7 +924,7 @@ void Wygrana(){
 //$$$$$$$$$$$$$$$$$$$$$KONIEC  WYGRANA$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>FUNKCJA LOSE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-void lose(){
+void lose(char Tablose[28][100]){
   for(int i = 0; i < 28; i++){
     for(int k = 0; k < 100;k++){
       Tablose[i][k] = '-';
