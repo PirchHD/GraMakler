@@ -145,7 +145,7 @@ void Rysowanie(char tab[25][100]){
         Wypisz_2(tab);
       }
 
-     if(tab[i][k] != 'X'){
+     if(tab[i][k] != '/' && tab[i][k] != '_' && tab[i][k] != '\\'){
        tab[i][k] = ' ';
      }
 
@@ -403,8 +403,10 @@ void Wypisz(char tab[25][100]){
 
 void Wykres(char tab[25][100]){                                           
 	// Od k =3 do k 73   
-   int x,dodaje;                                                
-     tab[StartI][StartK] = 'X';
+   int x,dodaje;   
+     if(Kierunek == 1) tab[StartI][StartK] = '/';
+     if(Kierunek == 2) tab[StartI][StartK] = '\\';
+     if(Kierunek == 3) tab[StartI][StartK] = '_';
    x = rand()%101;
    if(Tryb == "NORMAL" || Tryb == "normal" || Tryb == "n" || Tryb == "Normal"){
      if(x <=50 ){
@@ -457,13 +459,15 @@ void Wykres(char tab[25][100]){
 
    StartI = StartI + dodaje;
    StartK++;
-   tab[StartI][StartK] = 'X';
+   if(Kierunek == 1 )tab[StartI][StartK] = '/';
+   if(Kierunek == 2) tab[StartI][StartK] = '\\';
+   if(Kierunek == 3)tab[StartI][StartK] = '_';
 }
 
 void Sprawdza(char tab[25][100]){
   int k = 64;
   for(int i = 0; i < 22; i++){
-    if(tab[i][k] == 'X'){
+    if(tab[i][k] == '/' || tab[i][k] == '\\' || tab[i][k] =='_'){
       Sekundy = -1;
       k = 3;
       Czyszczenie(i, k, tab);
@@ -472,14 +476,14 @@ void Sprawdza(char tab[25][100]){
 
   int i = 22;
   for(int k = 3; k < 65; k++){
-    if(tab[i][k] == 'X'){
+    if(tab[i][k] == '/' || tab[i][k] == '\\' || tab[i][k] == '_'){
       i = 1;
       WartoscMax=WartoscMax - 105;
       Czyszczenie(i, k, tab);
     }
 
     int i = 0;
-    if( tab[i][k] == 'X'){ 
+    if( tab[i][k] == '/' || tab[i][k] == '\\' || tab[i][k] == '_'){ 
       i = 21;
      WartoscMax = WartoscMax + 105;
      Czyszczenie(i, k, tab);
