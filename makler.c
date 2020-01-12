@@ -1,6 +1,8 @@
 /*
  Zrobic animacj gdy wychodzisz/przegrywasz
  Zrobic system zapisu rankingu i by byl pokazany na koncu [Przez pliki tekstowe]
+ Zmienic X na / \ i _
+
 */
 
 #include <stdio.h>
@@ -12,8 +14,6 @@
 void Rysowanie(char tab[25][100]);  // Rysuje: | - i +
 void Wypisz();    // wypisuje tablice oraz w danym punkcie wypisuje takie rzeczy jak np. DANE:
 void Wykres(char tab[25][100]);   
-void ZapiszT1doT2(char tab[25][100],char tab2[25][100]);
-void ZapiszT2doT1(char tab[25][100],char tab2[25][100]);
 void Sprawdza(char tab[25][100]);
 void Czyszczenie(int ZapisaneI,int ZapisaneK,char tab[25][100]);
 void Kupuj();
@@ -62,6 +62,7 @@ int StartI=10; //  OD TEGO ZACZYNA RYSOWAC FUNKCJA btc
 int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA btc 
 int AktualnaCena = 150;
 int Saldo;
+int Kierunek = 0;
 
 int main(){
 
@@ -71,7 +72,6 @@ int main(){
 
   char TabMain[28][100];
   char tab[25][100];
-  char tab2[25][100];
 
   intro(TabMain);
   WypiszIntro(TabMain);
@@ -109,9 +109,7 @@ int main(){
    Wykres(tab);
    WartoscMin = WartoscMax;
    Sprawdza(tab);
-   ZapiszT1doT2(tab, tab2);
    Wypisz();
-   ZapiszT2doT1(tab, tab2);
 
    Brakuje = ZapiszBrakuje;
 
@@ -148,7 +146,7 @@ void Rysowanie(char tab[25][100]){
       }
 
      if(tab[i][k] != 'X'){
-     tab[i][k] = ' ';
+       tab[i][k] = ' ';
      }
 
       if(k == 64 || k == 0 || k == 1){
@@ -217,8 +215,6 @@ void Wypisz_1(char tab[25][100]){
     if((k >= 79 && k <= 81) && i != 14){
       tab[i][k] = '1';
      }
-
-    
       tab[16][76] = '1';
       tab[16][77] = '1';
       tab[16][78] = '1';
@@ -405,41 +401,63 @@ void Wypisz(char tab[25][100]){
   }
 }
 
-void Wykres(char tab[25][100]){
-	// Od k =3 do k 73
-   int x = 0,dodaje=0; 
-   tab[StartI][StartK] = 'X';
+void Wykres(char tab[25][100]){                                           
+	// Od k =3 do k 73   
+   int x,dodaje;                                                
+     tab[StartI][StartK] = 'X';
    x = rand()%101;
-   if(x <= 60 ){
-     dodaje = -1;
-     	AktualnaCena = AktualnaCena + 5;
+   if(Tryb == "NORMAL" || Tryb == "normal" || Tryb == "n" || Tryb == "Normal"){
+     if(x <=50 ){
+       dodaje = -1;
+       AktualnaCena = AktualnaCena + 5;
+       Kierunek = 1;
+     }
+     if(x > 50 && x <=90){
+       dodaje = 1;
+       AktualnaCena = AktualnaCena - 5;
+       Kierunek = 2;
+     }
+     if(x > 90){ 
+       dodaje = 0;
+       Kierunek  = 3;
+     }
    }
-   if(x > 60 && x <=90){
-     dodaje = 1;
-     AktualnaCena = AktualnaCena - 5;
+   if(Tryb == "HARD" || Tryb == "Hard" || Tryb == "H" || Tryb == "hard"){
+     if(x <= 45){
+       dodaje = -1;
+       AktualnaCena = AktualnaCena+5;
+       Kierunek = 1;
+     }
+     if(x > 45 && x <= 75){
+       dodaje = 1;
+       AktualnaCena = AktualnaCena - 5;
+       Kierunek = 2;
+     }
+     if(x > 75){
+       dodaje = 0;
+       Kierunek = 3;
+     }
    }
-   if(x > 90){ 
-     dodaje = 0;
+   else{
+     if(x <= 60){
+       dodaje = -1;
+       AktualnaCena = AktualnaCena +5;
+       Kierunek = 1;
+     }
+     if(x > 60 && x <= 90){
+       dodaje = 1;
+       AktualnaCena = AktualnaCena - 5;
+       Kierunek = 2;
+     }
+     if(x > 90){
+       dodaje = 0;
+       Kierunek = 3;
+     }
    }
+
    StartI = StartI + dodaje;
    StartK++;
    tab[StartI][StartK] = 'X';
-}
-
-void ZapiszT1doT2(char tab[25][100],char tab2[25][100]){
-  for(int i = 0; i < 24; i ++){
-    for(int k = 0; k < 96; k++){
-      tab2[i][k] = tab[i][k];
-    }
-  }
-}
-
-void ZapiszT2doT1(char tab[25][100],char tab2[25][100]){
-  for(int i = 0; i < 24; i ++){
-    for(int k = 0; k < 96; k++){
-      tab[i][k] = tab2[i][k];
-    }
-  }
 }
 
 void Sprawdza(char tab[25][100]){
@@ -454,14 +472,14 @@ void Sprawdza(char tab[25][100]){
 
   int i = 22;
   for(int k = 3; k < 65; k++){
-    if(tab[i][k]  == 'X'){
+    if(tab[i][k] == 'X'){
       i = 1;
       WartoscMax=WartoscMax - 105;
       Czyszczenie(i, k, tab);
     }
 
     int i = 0;
-    if(tab[i][k] == 'X'){ 
+    if( tab[i][k] == 'X'){ 
       i = 21;
      WartoscMax = WartoscMax + 105;
      Czyszczenie(i, k, tab);
@@ -475,9 +493,12 @@ void Czyszczenie(int ZapisaneI, int ZapisaneK, char tab[25][100]){
       tab[i][k] = ' ';
     }
   }
-    StartI=ZapisaneI;
-    StartK=ZapisaneK;
+
+  StartI=ZapisaneI;
+  StartK=ZapisaneK;
+  
   tab[ZapisaneI][ZapisaneK] = 'X';
+  
   WartoscZapis = WartoscMax;
   Rysowanie(tab);
 }
@@ -516,7 +537,7 @@ void Niebieski(){
 }
 
 void Zolty(){
-  printf("%c[%dm",0x1B,44);
+  printf("%c[%dm",0x1B,33);
 }
 
 // Koniec funkcji kolorow
@@ -953,19 +974,12 @@ void Ustawienia_Prof(){
   system("clear");
   printf("Czy włączyć tryb bota ? (T/N)");
   scanf("%c",&Mode_Bot);
-  if(Mode_Bot == 'T' || Mode_Bot == 't'){
-    printf("Nazwa użytkownika[max 10 znaków]: Bot_");
-    scanf("%s",Nazwa);
-    Tryby();
-  }
-  if(Mode_Bot == 'N' || Mode_Bot == 'n'){
-    printf("Nazwa użytkownika[max 10 znaków]: ");
-    scanf("%s",Nazwa);
-    Tryby();
-  }
-  else{ 
-    Ustawienia_Prof();
-  }
+  
+  printf("Nazwa użytkownika[max 10 znaków]: ");
+  if(Mode_Bot == 'T' || Mode_Bot == 't')  printf("Bot_");
+  scanf("%s",Nazwa);
+  Tryby();
+  
 }
 
 void Tryby(){
@@ -981,7 +995,19 @@ void Tryby(){
   Zielony(); printf("         2 razy gorszy czas\t"); Reset();
   Zolty(); printf("   Rzeczywisty czas");Reset();
   Czerwony(); printf("       2 razy lepszy czas\n"); Reset();
+  
+  printf("Wybierz tryb: ");
   scanf("%s",Tryb);
+
+  if(Tryb == "NORMAL" || Tryb == "N" || Tryb == "Normal" || Tryb == "normal"){
+    Dolar = 500;
+  }
+  if(Tryb == "Hard" || Tryb == "HARD" || Tryb == "H" || Tryb == "hard"){
+    Dolar = 250;
+  }
+  else{
+    Dolar = 1000;
+  }
 }
 
 //Ustawienia poczatkowe
