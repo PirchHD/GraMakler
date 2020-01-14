@@ -28,6 +28,7 @@ void Reset(); // Zwykły Kolor
 void Zielony();
 void Niebieski();
 void Zolty();
+void Czerwony();
 
 void Tutorial();
 
@@ -62,7 +63,7 @@ int StartI=10; //  OD TEGO ZACZYNA RYSOWAC FUNKCJA btc
 int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA btc 
 int AktualnaCena = 150;
 int Saldo;
-int Kierunek = 0;
+int Kierunek = 1;
 
 int main(){
 
@@ -266,7 +267,19 @@ void Wypisz_2(char tab[25][100]){
 void Wypisz(char tab[25][100]){
   for(int i = 0; i < 24; i++){
     for(int k = 0; k < 96;k++){
+      if(tab[i][k] == '\\'){
+        Zielony();
+      }
+      if(tab[i][k] == '_'){
+        Zolty();
+      }
+      if(tab[i][k] == '/'){
+        Czerwony();
+      }
       printf("%c",tab[i][k]);
+      
+      Reset();
+
       if(k == 65 && i ==1){
          printf("DANE: ");
       }
@@ -403,10 +416,10 @@ void Wypisz(char tab[25][100]){
 
 void Wykres(char tab[25][100]){                                           
 	// Od k =3 do k 73   
-   int x,dodaje;   
-     if(Kierunek == 1) tab[StartI][StartK] = '/';
-     if(Kierunek == 2) tab[StartI][StartK] = '\\';
-     if(Kierunek == 3) tab[StartI][StartK] = '_';
+   int x,dodaje,PoprzedniKierunek;
+   
+  PoprzedniKierunek = Kierunek;
+
    x = rand()%101;
    if(Tryb == "NORMAL" || Tryb == "normal" || Tryb == "n" || Tryb == "Normal"){
      if(x <=50 ){
@@ -459,9 +472,52 @@ void Wykres(char tab[25][100]){
 
    StartI = StartI + dodaje;
    StartK++;
-   if(Kierunek == 1 )tab[StartI][StartK] = '/';
-   if(Kierunek == 2) tab[StartI][StartK] = '\\';
-   if(Kierunek == 3)tab[StartI][StartK] = '_';
+// 1 - /   2 - \     3- _      
+     if(Kierunek == 1){
+       if(PoprzedniKierunek == 2){ 
+	StartI = StartI + 1;
+        tab[StartI][StartK] = '/';
+	//system("sleep 1");  Prawie bylo by super :) 
+	Sekundy++;
+	StartI = StartI - 1;
+        StartK = StartK + 1; 
+	tab[StartI][StartK] = '/';
+       }
+       if(PoprzedniKierunek == 3){
+        StartI = StartI + 1;
+        tab[StartI][StartK] = '/';
+        StartI = StartI - 1;
+	Sekundy++;
+        StartK = StartK + 1;
+        tab[StartI][StartK] = '/';	
+       }
+       else{
+         tab[StartI][StartK] = '/';
+       }
+     }
+     if(Kierunek == 2){ 
+       if(PoprzedniKierunek == 1){
+	 StartI = StartI - 1;
+         tab[StartI][StartK] = '\\';
+	 Sekundy++;
+	 StartI = StartI + 1;
+	 StartK = StartK + 1;
+	 tab[StartI][StartK] = '\\';
+       }
+       else{
+         tab[StartI][StartK] = '\\';
+       }
+     }
+     if(Kierunek == 3){ 
+       if(PoprzedniKierunek == 1){
+         StartI = StartI - 1;
+	 tab[StartI][StartK] = '_';
+       }
+       else{
+         tab[StartI][StartK] = '_';
+       }
+     }
+  
 }
 
 void Sprawdza(char tab[25][100]){
@@ -501,7 +557,9 @@ void Czyszczenie(int ZapisaneI, int ZapisaneK, char tab[25][100]){
   StartI=ZapisaneI;
   StartK=ZapisaneK;
   
-  tab[ZapisaneI][ZapisaneK] = 'X';
+  if(Kierunek == 1)tab[ZapisaneI][ZapisaneK] = '/';
+  if(Kierunek == 2)tab[ZapisaneI][ZapisaneK] = '\\';
+  if(Kierunek == 3)tab[ZapisaneI][ZapisaneK] = '_';
   
   WartoscZapis = WartoscMax;
   Rysowanie(tab);
