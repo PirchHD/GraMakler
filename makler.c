@@ -1,8 +1,6 @@
 /*
  Zrobic animacj gdy wychodzisz/przegrywasz
  Zrobic system zapisu rankingu i by byl pokazany na koncu [Przez pliki tekstowe]
- Zmienic X na / \ i _
-
 */
 
 #include <stdio.h>
@@ -11,20 +9,20 @@
 #include <unistd.h>
 #include <poll.h>
 
-void Rysowanie(char tab[25][100]);  // Rysuje: | - i +
-void Wypisz();    // wypisuje tablice oraz w danym punkcie wypisuje takie rzeczy jak np. DANE:
-void Wykres(char tab[25][100]);   
-void Sprawdza(char tab[25][100]);
-void Czyszczenie(int ZapisaneI,int ZapisaneK,char tab[25][100]);
-void Kupuj();
-void Sprzedaj();
+void Rysowanie(char tab[25][100],char Wybor[1]);  // Rysuje: | - i +
+void Wypisz(char tab[25][100], int *Sekundy, int *Minuty, int *Godziny, char Nazwa[10], char Wybor[1], int *Saldo, int *AktualnaCena, int *Dolar, int *BTC, int *Brakuje, int *ZapiszBrakuje, int *WartoscZapis); 
+void Wykres(char tab[25][100],int *Sekundy, char *Tryb, int *Kierunek, int *AktualnaCena, int *StartI, int *StartK);   
+void Sprawdza(char tab[25][100],int *Sekundy,char Wybor[1], int *Kierunek, int *WartoscMax, int *WartoscZapis, int *StartI, int *StartK);
+void Czyszczenie(int ZapisaneI,int ZapisaneK,char tab[25][100],char Wybor[1], int *Kierunek, int *WartoscMax, int *WartoscZapis, int *StartI, int *StartK);
+void Kupuj(int *AktualnaCena, int *Dolar, int *BTC);
+void Sprzedaj(int *AktualnaCena, int *Dolar, int *BTC);
 
 //Wypisuje 1/2/
 void Wypisz_1(char tab[25][100]);
 void Wypisz_2(char tab[25][100]);
 
 //funkcje Koloru
-void Reset(); // Zwykły Kolor
+void Reset(); // ZwykĹ‚y Kolor
 void Zielony();
 void Niebieski();
 void Zolty();
@@ -32,8 +30,8 @@ void Czerwony();
 
 void Tutorial();
 
-void Ustawienia_Prof();
-void Tryby();
+void Ustawienia_Prof(char Nazwa[10], char *Mode_Bot,char *Tryb,int *Dolar);
+void Tryby(char *Tryb,int *Dolar);
 
 void intro(char Tabintra[28][100]); // Animacja napisu $$$ i MAKLER
 void WypiszIntro(char Tabintra[28][100]);
@@ -41,30 +39,8 @@ void WypiszIntro(char Tabintra[28][100]);
 void Wygrana(char TabWygrana[28][100]);
 void lose(char Tablose[28][100]);
 
-char Nazwa[10];
-char Mode_Bot;
-char Tryb[]="Normal";
 
-int Dolar = 500;
-int BTC = 0;
-int WartoscMax = 200;
-int WartoscMin = 0;
-int WartoscZapis = 0;
-int Brakuje = 1000000;
-int ZapiszBrakuje = 1000000;
-
-//Zmienne do liczenia czasu (Time)
-int Sekundy = 0; 
-int Minuty = 0;
-int Godziny = 0;
-
-char Wybor[1]; // WYBOR CO ZROBISZ KUPISZ - 1 SPRZEDASZ- 2 EXIT - 3 NIC - DALEJ WYKONUJE FUNKCJE MAIN
-int StartI=10; //  OD TEGO ZACZYNA RYSOWAC FUNKCJA btc
-int StartK=3;  // OD TEGO ZACZYNA RYSOWAC FUNKCJA btc 
-int AktualnaCena = 150;
-int Saldo;
-int Kierunek = 1;
-
+//!!!!!!!!!!!!!!FUNKCJA MAIN:
 int main(){
 
   puts("\x1B[8;28;100t"); // kod kotrolny xterm-a; \x1B-ESC 
@@ -74,6 +50,25 @@ int main(){
   char TabMain[28][100];
   char tab[25][100];
 
+  int StartI = 10;
+  int StartK = 3;
+
+  int Dolar = 500;
+  int BTC = 0;
+  int WartoscMax = 200;
+  int WartoscMin = 0;
+  int WartoscZapis = 0;
+  int Brakuje = 1000000;
+  int ZapiszBrakuje = 1000000;
+
+  int AktualnaCena = 165;
+  int Saldo;
+  int Kierunek = 1;
+
+  char Nazwa[10], Mode_Bot,Tryb,Wybor[1];
+
+  int Sekundy = 0, Minuty = 0, Godziny = 0;
+
   intro(TabMain);
   WypiszIntro(TabMain);
 
@@ -82,16 +77,16 @@ int main(){
   Tutorial();
 
   system("clear");
-  puts("\x1B[8;7;76"); // Gdybym chcial to zrobic jako biblioteke a nie kodu to uzylbyn ncourses.h :D
+  puts("\x1B[8;7;76"); // ncourses.h :D
 
-  Ustawienia_Prof();
+  Ustawienia_Prof(Nazwa, &Mode_Bot, &Tryb, &Dolar);
 
   while(Saldo <= 1000000){
    puts("\x1B[8;25;140t"); //Rozmiar okna 25 x 140
    // Zapisuje Aktualne dane do Uzytkownik.txt
      FILE *plik;
      if((plik = fopen("Uzytkownik.txt","w")) == NULL){
-       printf("Bład pliku"); exit(2);
+       printf("BĹ‚ad pliku"); exit(2);
      }
 
      fprintf(plik,"%s",Nazwa);
@@ -106,12 +101,11 @@ int main(){
   
    Reset();
 
-   Rysowanie(tab);
-   Wykres(tab);
+   Rysowanie(tab,Wybor);
+   Wykres(tab, &Sekundy, &Tryb, &Kierunek, &AktualnaCena, &StartI, &StartK);
    WartoscMin = WartoscMax;
-   Sprawdza(tab);
-   Wypisz();
-
+   Sprawdza(tab, &Sekundy, Wybor, &Kierunek, &WartoscMax, &WartoscZapis, &StartI, &StartK);
+   Wypisz(tab, &Sekundy, &Minuty, &Godziny, Nazwa, Wybor, &Saldo, &AktualnaCena, &Dolar, &BTC, &Brakuje, &ZapiszBrakuje,&WartoscZapis);
    Brakuje = ZapiszBrakuje;
 
    //Sprawdza czy przegrales
@@ -135,7 +129,7 @@ int main(){
 return 0;
 }
 
-void Rysowanie(char tab[25][100]){
+void Rysowanie(char tab[25][100],char Wybor[1]){
   for (int i = 0; i < 24; i++){
     for(int k = 0; k < 96; k++){
       
@@ -264,7 +258,7 @@ void Wypisz_2(char tab[25][100]){
   }
 }
 
-void Wypisz(char tab[25][100]){
+void Wypisz(char tab[25][100],int *Sekundy,int *Minuty,int *Godziny, char Nazwa[10],char Wybor[1], int *Saldo, int *AktualnaCena,int *Dolar, int *BTC, int *Brakuje, int *ZapiszBrakuje, int *WartoscZapis){
   for(int i = 0; i < 24; i++){
     for(int k = 0; k < 96;k++){
       if(tab[i][k] == '\\'){
@@ -291,16 +285,16 @@ void Wypisz(char tab[25][100]){
       }
 
       if(k == 66 && i == 3){
-	Saldo = Dolar + (BTC * AktualnaCena);
+	*Saldo = *Dolar + (*BTC * (*AktualnaCena) );
 	Niebieski();
-        printf("+Twoje saldo: %d",Saldo);
+        printf("+Twoje saldo: %d",*Saldo);
 	Reset();
       }
 
       if(k == 66 && i == 4){
 	Niebieski();
-	Brakuje = ZapiszBrakuje - Saldo;
-        printf("+Do miliona brakuje: %d", Brakuje);
+	*Brakuje = *ZapiszBrakuje - *Saldo;
+        printf("+Do miliona brakuje: %d", *Brakuje);
 	Reset();
       }
 
@@ -334,9 +328,9 @@ void Wypisz(char tab[25][100]){
 
       if(k == 65 && i == 12){
 	Zielony();
-        printf("Dolarki: %d $ ",Dolar);
+        printf("Dolarki: %d $ ", *Dolar);
 	Reset();
-	printf("BTC: %d ",BTC);
+	printf("BTC: %d ", *BTC);
 	Reset();
       }
    // Wybrano: 
@@ -349,11 +343,11 @@ void Wypisz(char tab[25][100]){
 	    scanf("%1s",Wybor);
 	    if(Wybor[0] == '1'){
 	      s = 0;
-	      Kupuj();
+	      Kupuj(AktualnaCena, Dolar, BTC);
 	    }
 	    if(Wybor[0] == '2'){
 	      s = 0;
-	      Sprzedaj();
+	      Sprzedaj(AktualnaCena, Dolar, BTC);
 	    }
 	    if(Wybor[0] == '3'){
 	      exit(1);
@@ -369,8 +363,8 @@ void Wypisz(char tab[25][100]){
      // Wartosc bitcoina
       if(i != 23 && i != 22 && i !=0){
         if(k == 0){
-          printf("%5d", WartoscZapis);
-	  WartoscZapis = WartoscZapis - 5;
+          printf("%5d", *WartoscZapis);
+	  *WartoscZapis = *WartoscZapis - 5;
 	}
       }
 
@@ -382,23 +376,23 @@ void Wypisz(char tab[25][100]){
       if(i == 22 && k == 95){
 	 printf("\n");
 	 printf("|TIME!|TIME|TIME|");
-	Sekundy++;
-	printf("Sekundy: %2d| ",Sekundy);
-	if(Sekundy == 60){
-          Minuty++;
-	  Sekundy = 0;
-	  printf("Minuta: %2d| ",Minuty);
+	*Sekundy = *Sekundy + 1;
+	printf("Sekundy: %2d| ",*Sekundy);
+	if(*Sekundy >= 60){
+          *Minuty = *Minuty + 1;
+	  *Sekundy = 0;
+	  printf("Minuta: %2d| ",*Minuty);
 	}
 	else{
-	  printf("Minuta: %2d| ",Minuty);
+	  printf("Minuta: %2d| ",*Minuty);
 	}
-	if(Minuty == 60){
-	  Minuty = 0; 
-	  Godziny++;
-	  printf("Godzina: %2d|", Godziny);
+	if(*Minuty >= 60){
+	  *Minuty = 0; 
+	  *Godziny = *Godziny + 1;
+	  printf("Godzina: %2d|", *Godziny);
 	}
 	else{
-          printf("Godzina: %2d|",Godziny);
+          printf("Godzina: %2d|",*Godziny);
 	}
 
 	printf("TIME|TIME|TIME!|");
@@ -414,119 +408,119 @@ void Wypisz(char tab[25][100]){
   }
 }
 
-void Wykres(char tab[25][100]){                                           
+void Wykres(char tab[25][100],int *Sekundy, char *Tryb, int *Kierunek, int *AktualnaCena, int *StartI, int *StartK){                                           
 	// Od k =3 do k 73   
    int x,dodaje,PoprzedniKierunek;
    
-  PoprzedniKierunek = Kierunek;
+  PoprzedniKierunek = *Kierunek;
 
    x = rand()%101;
-   if(Tryb == "NORMAL" || Tryb == "normal" || Tryb == "n" || Tryb == "Normal"){
+   if( *Tryb == 'n' || *Tryb == 'N'){
      if(x <=50 ){
        dodaje = -1;
-       AktualnaCena = AktualnaCena + 5;
-       Kierunek = 1;
+       *AktualnaCena = *AktualnaCena + 5;
+       *Kierunek = 1;
      }
      if(x > 50 && x <=90){
        dodaje = 1;
-       AktualnaCena = AktualnaCena - 5;
-       Kierunek = 2;
+       *AktualnaCena = *AktualnaCena - 5;
+       *Kierunek = 2;
      }
      if(x > 90){ 
        dodaje = 0;
-       Kierunek  = 3;
+       *Kierunek  = 3;
      }
    }
-   if(Tryb == "HARD" || Tryb == "Hard" || Tryb == "H" || Tryb == "hard"){
+   if(*Tryb == 'H' || *Tryb == 'h'){
      if(x <= 45){
        dodaje = -1;
-       AktualnaCena = AktualnaCena+5;
-       Kierunek = 1;
+       *AktualnaCena = *AktualnaCena + 5;
+       *Kierunek = 1;
      }
      if(x > 45 && x <= 75){
        dodaje = 1;
-       AktualnaCena = AktualnaCena - 5;
-       Kierunek = 2;
+       *AktualnaCena = *AktualnaCena - 5;
+       *Kierunek = 2;
      }
      if(x > 75){
        dodaje = 0;
-       Kierunek = 3;
+       *Kierunek = 3;
      }
    }
    else{
      if(x <= 60){
        dodaje = -1;
-       AktualnaCena = AktualnaCena +5;
-       Kierunek = 1;
+       *AktualnaCena = *AktualnaCena +5;
+       *Kierunek = 1;
      }
      if(x > 60 && x <= 90){
        dodaje = 1;
-       AktualnaCena = AktualnaCena - 5;
-       Kierunek = 2;
+       *AktualnaCena = *AktualnaCena - 5;
+       *Kierunek = 2;
      }
      if(x > 90){
        dodaje = 0;
-       Kierunek = 3;
+       *Kierunek = 3;
      }
    }
 
-   StartI = StartI + dodaje;
-   StartK++;
+   *StartI = *StartI + dodaje;
+   *StartK = *StartK + 1;
 // 1 - /   2 - \     3- _      
-     if(Kierunek == 1){
+     if(*Kierunek == 1){
        if(PoprzedniKierunek == 2){ 
-	StartI = StartI + 1;
-        tab[StartI][StartK] = '/';
+	*StartI = *StartI + 1;
+        tab[*StartI][*StartK] = '/';
 	//system("sleep 1");  Prawie bylo by super :) 
-	Sekundy++;
-	StartI = StartI - 1;
-        StartK = StartK + 1; 
-	tab[StartI][StartK] = '/';
+	*Sekundy = *Sekundy + 1;
+	*StartI = *StartI - 1;
+        *StartK = *StartK + 1; 
+	tab[*StartI][*StartK] = '/';
        }
        if(PoprzedniKierunek == 3){
-        StartI = StartI + 1;
-        tab[StartI][StartK] = '/';
-        StartI = StartI - 1;
-	Sekundy++;
-        StartK = StartK + 1;
-        tab[StartI][StartK] = '/';	
+        *StartI = *StartI + 1;
+        tab[*StartI][*StartK] = '/';
+        *StartI = *StartI - 1;
+	*Sekundy = *Sekundy + 1;
+        *StartK = *StartK + 1;
+        tab[*StartI][*StartK] = '/';	
        }
        else{
-         tab[StartI][StartK] = '/';
+         tab[*StartI][*StartK] = '/';
        }
      }
-     if(Kierunek == 2){ 
+     if(*Kierunek == 2){ 
        if(PoprzedniKierunek == 1){
-	 StartI = StartI - 1;
-         tab[StartI][StartK] = '\\';
-	 Sekundy++;
-	 StartI = StartI + 1;
-	 StartK = StartK + 1;
-	 tab[StartI][StartK] = '\\';
+	 *StartI = *StartI - 1;
+         tab[*StartI][*StartK] = '\\';
+	 *Sekundy = *Sekundy + 1;
+	 *StartI = *StartI + 1;
+	 *StartK = *StartK + 1;
+	 tab[*StartI][*StartK] = '\\';
        }
        else{
-         tab[StartI][StartK] = '\\';
+         tab[*StartI][*StartK] = '\\';
        }
      }
-     if(Kierunek == 3){ 
+     if(*Kierunek == 3){ 
        if(PoprzedniKierunek == 1){
-         StartI = StartI - 1;
-	 tab[StartI][StartK] = '_';
+         *StartI = *StartI - 1;
+	 tab[*StartI][*StartK] = '_';
        }
        else{
-         tab[StartI][StartK] = '_';
+         tab[*StartI][*StartK] = '_';
        }
      }
   
 }
 
-void Sprawdza(char tab[25][100]){
+void Sprawdza(char tab[25][100],int *Sekundy,char Wybor[1], int *Kierunek, int *WartoscMax, int *WartoscZapis, int *StartI, int *StartK){
   int k = 64;
   for(int i = 0; i < 22; i++){
     if(tab[i][k] == '/' || tab[i][k] == '\\' || tab[i][k] =='_'){
-      Sekundy = -1;
+      *Sekundy = -1;
       k = 3;
-      Czyszczenie(i, k, tab);
+      Czyszczenie(i, k, tab, Wybor, Kierunek, WartoscMax, WartoscZapis, StartI, StartK);
     }
   }
 
@@ -534,48 +528,48 @@ void Sprawdza(char tab[25][100]){
   for(int k = 3; k < 65; k++){
     if(tab[i][k] == '/' || tab[i][k] == '\\' || tab[i][k] == '_'){
       i = 1;
-      WartoscMax=WartoscMax - 105;
-      Czyszczenie(i, k, tab);
+      *WartoscMax = *WartoscMax - 105;
+      Czyszczenie(i, k, tab, Wybor, Kierunek, WartoscMax, WartoscZapis, StartI, StartK);
     }
 
     int i = 0;
     if( tab[i][k] == '/' || tab[i][k] == '\\' || tab[i][k] == '_'){ 
       i = 21;
-     WartoscMax = WartoscMax + 105;
-     Czyszczenie(i, k, tab);
+     *WartoscMax = *WartoscMax + 105;
+     Czyszczenie(i, k, tab, Wybor, Kierunek, WartoscMax, WartoscZapis, StartI, StartK);
     }
   }
 }
 
-void Czyszczenie(int ZapisaneI, int ZapisaneK, char tab[25][100]){
+void Czyszczenie(int ZapisaneI, int ZapisaneK, char tab[25][100], char Wybor[1], int *Kierunek, int *WartoscMax, int *WartoscZapis, int *StartI, int *StartK){
   for(int i = 0; i < 25; i ++){
     for(int k = 0; k < 100; k ++){
       tab[i][k] = ' ';
     }
   }
 
-  StartI=ZapisaneI;
-  StartK=ZapisaneK;
+  *StartI=ZapisaneI;
+  *StartK=ZapisaneK;
   
-  if(Kierunek == 1)tab[ZapisaneI][ZapisaneK] = '/';
-  if(Kierunek == 2)tab[ZapisaneI][ZapisaneK] = '\\';
-  if(Kierunek == 3)tab[ZapisaneI][ZapisaneK] = '_';
+  if(*Kierunek == 1)tab[ZapisaneI][ZapisaneK] = '/';
+  if(*Kierunek == 2)tab[ZapisaneI][ZapisaneK] = '\\';
+  if(*Kierunek == 3)tab[ZapisaneI][ZapisaneK] = '_';
   
-  WartoscZapis = WartoscMax;
-  Rysowanie(tab);
+  *WartoscZapis = *WartoscMax;
+  Rysowanie(tab,Wybor);
 }
 
-void Kupuj(){
-    if(Dolar >= AktualnaCena){
-       BTC++;
-      Dolar = Dolar - AktualnaCena;
+void Kupuj(int *AktualnaCena, int *Dolar, int *BTC){
+    if(*Dolar >= *AktualnaCena){
+      *BTC = *BTC + 1;
+      *Dolar = *Dolar - *AktualnaCena;
    }
 }
 
-void Sprzedaj(){
-  if(BTC > 0){
-    BTC--;
-    Dolar = Dolar + AktualnaCena;
+void Sprzedaj(int *AktualnaCena, int *Dolar, int *BTC){
+  if(*BTC > 0){
+    *BTC = *BTC - 1;
+    *Dolar = *Dolar + *AktualnaCena;
   }
 }
 
@@ -841,13 +835,13 @@ void Tutorial(){
   Reset();
 
   printf("+ Gra polega na tym by w jak najmniejszym w czasie zarobic MILION $\n");
-  printf("+ By zarabiać jak najszybciej kupuj BTC w jak najniższej cenie a sprzedawaj w jak najdrożej!\n");
+  printf("+ By zarabiać jak najszybciej kupuj BTC w jak najniższej cenie a sprzedawaj w jak najdroższej!\n");
   printf("+ klikaj 1-By kupować BTC ! Klikaj 2 - By sprzedawać BTC\n");
-  printf("+ Gra ofieruję 3 tryby "); 
+  printf("+ Gra oferuje 3 tryby "); 
   Zielony(); printf("Easy"); Reset(); printf("/"); Zolty(); printf("Normaln"); Reset(); printf("/"); Czerwony(); printf("Hard\n"); Reset();
   printf("+ Pamietaj każdy tryb daje pewne ułatwienia/utrudnienia ale zarazem na zwiekszenie/zmniejszenie koncowego czasu ukonczenia Gry\n");
   printf("+ Baw się dobrze :D ! Kliknij ENTER by kontynuowac!");
-    getchar(); // getch by był dowolny przycisk zarazem bez entera. scanf - czeka na ente. getchar - czeka na entner getch - nie czeka na enter
+    getchar(); // getch by byĹ‚ dowolny przycisk zarazem bez entera. scanf - czeka na ente. getchar - czeka na entner getch - nie czeka na enter
 }
 
 //??????????????????????/KONIEC TUTORIAL????????????????????
@@ -1032,20 +1026,23 @@ void lose(char Tablose[28][100]){
 
 //Ustawienia poczatkowe 
 
-void Ustawienia_Prof(){
+void Ustawienia_Prof(char Nazwa[10], char *Mode_Bot,char *Tryb, int *Dolar){
   system("clear");
   printf("Czy włączyć tryb bota ? (T/N)");
-  scanf("%c",&Mode_Bot);
+  scanf("%c",&*Mode_Bot);
   
   printf("Nazwa użytkownika[max 10 znaków]: ");
-  if(Mode_Bot == 'T' || Mode_Bot == 't')  printf("Bot_");
-  scanf("%s",Nazwa);
-  Tryby();
+  if(*Mode_Bot == 'T' || *Mode_Bot == 't'){  
+    printf("Bot_");
+  }
+
+  scanf("%10s",Nazwa);
   
+  getchar();
+  Tryby(Tryb, Dolar);
 }
 
-void Tryby(){
-  
+void Tryby(char *Tryb, int *Dolar){
   Zielony(); printf("\t\t|EASY|\t"); Reset(); 
   Zolty();  printf("\t\t|NORMAL|\t\t"); Reset();
   Czerwony(); printf("|HARD|\n"); Reset();
@@ -1059,17 +1056,19 @@ void Tryby(){
   Czerwony(); printf("       2 razy lepszy czas\n"); Reset();
   
   printf("Wybierz tryb: ");
-  scanf("%s",Tryb);
+  scanf("%c",&*Tryb);
 
-  if(Tryb == "NORMAL" || Tryb == "N" || Tryb == "Normal" || Tryb == "normal"){
-    Dolar = 500;
+
+  if(*Tryb == 'N' || *Tryb == 'n'){
+    *Dolar = 500;
   }
-  if(Tryb == "Hard" || Tryb == "HARD" || Tryb == "H" || Tryb == "hard"){
-    Dolar = 250;
+  if(*Tryb == 'H' || *Tryb == 'h'){
+    *Dolar = 250;
   }
   else{
-    Dolar = 1000;
+    *Dolar = 1000;
   }
 }
 
 //Ustawienia poczatkowe
+
